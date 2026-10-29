@@ -31,50 +31,54 @@ class DefaultFirebaseOptions {
   }
 
   // Web configuration (Replace with your Firebase Console Web App config)
+
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDemoWebApiKey1234567890abcdef',
-    appId: '1:123456789012:web:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'bondly-app-demo',
-    authDomain: 'bondly-app-demo.firebaseapp.com',
-    storageBucket: 'bondly-app-demo.firebasestorage.app',
+    apiKey: 'AIzaSyA_FktYhLppz6Nacj2gZXBWRdOy99Q9kU0',
+    appId: '1:557968335740:web:25ce34fe6d4953ec77faf9',
+    messagingSenderId: '557968335740',
+    projectId: 'bondly-f401f',
+    authDomain: 'bondly-f401f.firebaseapp.com',
+    storageBucket: 'bondly-f401f.firebasestorage.app',
+    measurementId: 'G-M8X9S1P1F1',
   );
-
   // Android configuration (Replace with your Firebase Console Android App config)
+
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDemoAndroidApiKey1234567890abcdef',
-    appId: '1:123456789012:android:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'bondly-app-demo',
-    storageBucket: 'bondly-app-demo.firebasestorage.app',
+    apiKey: 'AIzaSyCFovWS8oBNvD1kM50MpdOy1kzWxA1Nqpw',
+    appId: '1:557968335740:android:8f44a0d2bb5d67fc77faf9',
+    messagingSenderId: '557968335740',
+    projectId: 'bondly-f401f',
+    storageBucket: 'bondly-f401f.firebasestorage.app',
   );
-
   // iOS configuration (Replace with your Firebase Console iOS App config)
+
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDemoIosApiKey1234567890abcdef',
-    appId: '1:123456789012:ios:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'bondly-app-demo',
-    storageBucket: 'bondly-app-demo.firebasestorage.app',
+    apiKey: 'AIzaSyDb-atyBeRCb50DujSFs3PSPW1y0Ms-4ZM',
+    appId: '1:557968335740:ios:80bd73848da3092d77faf9',
+    messagingSenderId: '557968335740',
+    projectId: 'bondly-f401f',
+    storageBucket: 'bondly-f401f.firebasestorage.app',
     iosBundleId: 'com.bondly.frontend',
   );
-
   // macOS configuration
+
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDemoMacosApiKey1234567890abcdef',
-    appId: '1:123456789012:macos:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'bondly-app-demo',
-    storageBucket: 'bondly-app-demo.firebasestorage.app',
+    apiKey: 'AIzaSyDb-atyBeRCb50DujSFs3PSPW1y0Ms-4ZM',
+    appId: '1:557968335740:ios:80bd73848da3092d77faf9',
+    messagingSenderId: '557968335740',
+    projectId: 'bondly-f401f',
+    storageBucket: 'bondly-f401f.firebasestorage.app',
     iosBundleId: 'com.bondly.frontend',
   );
-
   // Windows configuration
+
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDemoWindowsApiKey1234567890abcdef',
-    appId: '1:123456789012:web:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'bondly-app-demo',
-    storageBucket: 'bondly-app-demo.firebasestorage.app',
+    apiKey: 'AIzaSyA_FktYhLppz6Nacj2gZXBWRdOy99Q9kU0',
+    appId: '1:557968335740:web:05b3f351163e21fc77faf9',
+    messagingSenderId: '557968335740',
+    projectId: 'bondly-f401f',
+    authDomain: 'bondly-f401f.firebaseapp.com',
+    storageBucket: 'bondly-f401f.firebasestorage.app',
+    measurementId: 'G-1TKK5B37KP',
   );
 }
