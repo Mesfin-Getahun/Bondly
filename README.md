@@ -1,6 +1,10 @@
-# Bondly
+# Bondly — Flutter + Firebase
 
-Full-stack application featuring a **Flutter** UI, **Node.js Express** API, **PostgreSQL (`pg`)** database, and **Cloudinary** for media upload, processing, and transformations.
+Bondly is a modern, cross-platform Flutter application built with direct **Firebase** integration:
+- ⚡ **Cloud Firestore**: Real-time NoSQL database with live stream subscriptions
+- 📁 **Firebase Storage**: Secure file and image storage with download URLs
+- 🔐 **Firebase Auth**: User identity management and secure access
+- 🎨 **Material 3 UI**: Clean dashboard with 1-click test upload, file picker, and real-time feed
 
 ---
 
@@ -8,107 +12,83 @@ Full-stack application featuring a **Flutter** UI, **Node.js Express** API, **Po
 
 ```
 Bondly/
-├── backend/                       # Express REST API
-│   ├── src/
-│   │   ├── config/
-│   │   │   ├── db.js              # PostgreSQL client (pg.Pool) with auto-table setup
-│   │   │   └── cloudinary.js      # Cloudinary v2 SDK & image transformation helper
-│   │   ├── controllers/
-│   │   │   ├── fileController.js  # Upload, list, and delete handlers
-│   │   │   └── healthController.js# System health & DB/Cloudinary diagnostics
-│   │   ├── middleware/
-│   │   │   ├── uploadMiddleware.js# Multer memory storage & file type filter
-│   │   │   └── errorHandler.js    # Global error handler
-│   │   ├── routes/
-│   │   │   ├── fileRoutes.js      # /api/files (GET, POST /upload, DELETE /:id)
-│   │   │   └── healthRoutes.js    # /api/health
-│   │   ├── app.js                 # Express application & CORS configuration
-│   │   └── server.js              # Server entry point (starts on port 5000)
-│   ├── tests/
-│   │   └── api.test.js            # Automated Jest & Supertest API test suite
-│   ├── .env.example               # Example environment variables
-│   ├── .env                       # Active environment configuration
-│   └── package.json
-│
-└── frontend/                      # Flutter UI Application
-    ├── lib/
-    │   ├── models/
-    │   │   └── file_item.dart     # Uploaded file item data model
-    │   ├── services/
-    │   │   └── api_service.dart   # REST client for backend API communication
-    │   └── main.dart              # Material 3 Dashboard (live status, uploader, feed)
-    ├── test/
-    │   └── widget_test.dart       # Flutter widget test suite
-    └── pubspec.yaml
+├── lib/
+│   ├── firebase_options.dart      # Platform FirebaseOptions (Web, Android, iOS, Windows, macOS)
+│   ├── models/
+│   │   └── file_item.dart         # File item model with Firestore document serialization
+│   ├── services/
+│   │   └── firebase_service.dart  # Firestore streams, Storage uploads, Auth, & offline simulator
+│   └── main.dart                  # Material 3 UI with live Firestore StreamBuilder
+├── test/
+│   └── widget_test.dart           # Automated Flutter widget test suite
+├── web/                           # Flutter Web support
+├── android/                       # Android native project
+├── ios/                           # iOS native project
+├── windows/                       # Windows Desktop support
+└── pubspec.yaml                   # Flutter dependencies
 ```
 
 ---
 
-## ⚙️ Configuration (`backend/.env`)
+## 🚀 Quick Start
 
-Edit `backend/.env` to configure your PostgreSQL credentials and Cloudinary credentials:
-
-```env
-PORT=5000
-NODE_ENV=development
-
-# PostgreSQL Configuration
-PGHOST=localhost
-PGPORT=5432
-PGUSER=postgres
-PGPASSWORD=your_postgres_password
-PGDATABASE=bondly_db
-
-# Cloudinary Configuration
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
-
-> **Note**: If PostgreSQL credentials are pending, the backend will safely run with an in-memory fallback store and indicate connection status via `/api/health`. Once valid credentials are provided, it automatically connects and creates the `uploaded_files` table.
-
----
-
-## 🚀 Running the Project
-
-### 1. Start the Express API Backend
+### 1. Run the App Immediately (Demo / Simulator Mode)
+The app is configured to compile and run out of the box with zero setup:
 ```bash
-cd backend
-npm install
-npm start
-```
-The API will run on `http://localhost:5000`.
-- Health status: [http://localhost:5000/api/health](http://localhost:5000/api/health)
-- Files endpoint: [http://localhost:5000/api/files](http://localhost:5000/api/files)
-
-### 2. Run the Flutter Frontend
-Open a new terminal window:
-```bash
-cd frontend
-flutter pub get
-
-# Run on Chrome Web:
+# Run on Web (Chrome):
 flutter run -d chrome
 
 # Or run on Windows Desktop:
 flutter run -d windows
 ```
 
+You can test the full upload and real-time UI by clicking the **"1-Click Demo Upload"** button or selecting any file.
+
 ---
 
-## 🧪 Testing and Verification
+### 2. Connect to Your Firebase Console Project
 
-- **Backend tests**:
-  ```bash
-  cd backend
-  npm test
-  ```
-  Runs 6 automated Jest & Supertest integration tests covering API endpoints, upload handling, and file management.
+To link this app to your live Firebase project:
 
-- **Flutter analyzer & tests**:
+1. **Install Firebase CLI** (if not already installed):
+   ```bash
+   npm install -g firebase-tools
+   firebase login
+   ```
+
+2. **Install FlutterFire CLI**:
+   ```bash
+   dart pub global activate flutterfire_cli
+   ```
+
+3. **Configure your project**:
+   ```bash
+   flutterfire configure
+   ```
+   Select your Firebase project and platforms. This will automatically update `lib/firebase_options.dart` with your real production API keys and project settings.
+
+4. **Enable Services in [Firebase Console](https://console.firebase.google.com)**:
+   - **Authentication**: Enable *Anonymous* or *Email/Password* provider.
+   - **Cloud Firestore**: Create database in production or test mode.
+   - **Firebase Storage**: Create storage bucket.
+
+---
+
+## 🧪 Verification & Testing
+
+- **Static Analysis**:
   ```bash
-  cd frontend
   flutter analyze
+  ```
+  *(0 issues found)*
+
+- **Widget & Unit Tests**:
+  ```bash
   flutter test
   ```
-  Runs Dart static analysis and widget tests.
+  *(All tests passed)*
+
+- **Production Web Build**:
+  ```bash
+  flutter build web
+  ```

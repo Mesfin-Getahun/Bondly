@@ -2,9 +2,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'models/file_item.dart';
-import 'services/api_service.dart';
+import 'services/firebase_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseService.initialize();
   runApp(const BondlyApp());
 }
 
@@ -14,12 +16,13 @@ class BondlyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bondly',
+      title: 'Bondly Firebase',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6366F1), // Modern Indigo
+          seedColor: const Color(0xFFFF9100), // Firebase Amber / Orange
+          primary: const Color(0xFFFF8F00),
           brightness: Brightness.light,
         ),
         cardTheme: CardThemeData(
@@ -42,74 +45,20 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  bool _isLoadingHealth = true;
-  bool _isLoadingFiles = true;
   bool _isUploading = false;
-  Map<String, dynamic>? _healthData;
-  List<FileItem> _files = [];
-  String? _statusError;
-
-  // Upload Form State
   final TextEditingController _titleController = TextEditingController();
   PlatformFile? _selectedFile;
 
   @override
   void initState() {
     super.initState();
-    _refreshAll();
+    FirebaseService.seedMockIfEmpty();
   }
 
   @override
   void dispose() {
     _titleController.dispose();
     super.dispose();
-  }
-
-  Future<void> _refreshAll() async {
-    await Future.wait([
-      _fetchHealth(),
-      _fetchFiles(),
-    ]);
-  }
-
-  Future<void> _fetchHealth() async {
-    setState(() {
-      _isLoadingHealth = true;
-      _statusError = null;
-    });
-    try {
-      final health = await ApiService.checkHealth();
-      if (mounted) {
-        setState(() {
-          _healthData = health;
-          _isLoadingHealth = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _statusError = e.toString();
-          _isLoadingHealth = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _fetchFiles() async {
-    setState(() => _isLoadingFiles = true);
-    try {
-      final files = await ApiService.fetchFiles();
-      if (mounted) {
-        setState(() {
-          _files = files;
-          _isLoadingFiles = false;
-        });
-      }
-    } catch (_) {
-      if (mounted) {
-        setState(() => _isLoadingFiles = false);
-      }
-    }
   }
 
   Future<void> _pickFile() async {
@@ -146,18 +95,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() => _isUploading = true);
 
     try {
-      final uploaded = await ApiService.uploadFile(
+      final uploaded = await FirebaseService.uploadFile(
         bytes: _selectedFile!.bytes!,
         fileName: _selectedFile!.name,
         title: title,
       );
 
-      _showSnackbar('File "${uploaded.title}" uploaded successfully!');
+      _showSnackbar('File "${uploaded.title}" uploaded to Firebase!');
       setState(() {
         _selectedFile = null;
         _titleController.clear();
       });
-      await _fetchFiles();
     } catch (e) {
       _showSnackbar('Upload failed: $e', isError: true);
     } finally {
@@ -167,11 +115,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  // Quick 1-click test upload using a sample PNG
   Future<void> _uploadDemoImage() async {
     setState(() => _isUploading = true);
     try {
-      // 1x1 transparent PNG sample bytes
+      // 1x1 sample PNG bytes
       final sampleBytes = Uint8List.fromList([
         0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D,
         0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
@@ -181,16 +128,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82
       ]);
 
-      final uploaded = await ApiService.uploadFile(
+      final uploaded = await FirebaseService.uploadFile(
         bytes: sampleBytes,
-        fileName: 'demo_sample_${DateTime.now().millisecondsSinceEpoch}.png',
-        title: 'Demo Test Image',
+        fileName: 'demo_image_${DateTime.now().millisecondsSinceEpoch}.png',
+        title: 'Demo Test Upload',
       );
 
-      _showSnackbar('Demo image "${uploaded.title}" uploaded successfully!');
-      await _fetchFiles();
+      _showSnackbar('Demo "${uploaded.title}" saved to Firebase!');
     } catch (e) {
-      _showSnackbar('Upload demo failed: $e', isError: true);
+      _showSnackbar('Demo upload failed: $e', isError: true);
     } finally {
       if (mounted) {
         setState(() => _isUploading = false);
@@ -203,7 +149,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Confirm Deletion'),
-        content: Text('Are you sure you want to delete "${file.title}"?'),
+        content: Text('Delete "${file.title}" from Firebase Firestore & Storage?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -220,15 +166,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (confirm == true) {
       try {
-        final success = await ApiService.deleteFile(file.id);
+        final success = await FirebaseService.deleteFile(file);
         if (success) {
-          _showSnackbar('File deleted.');
-          await _fetchFiles();
+          _showSnackbar('File deleted from Firebase.');
         } else {
           _showSnackbar('Could not delete file.', isError: true);
         }
       } catch (e) {
-        _showSnackbar('Error deleting: $e', isError: true);
+        _showSnackbar('Delete failed: $e', isError: true);
       }
     }
   }
@@ -238,7 +183,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: isError ? Colors.red.shade700 : Colors.green.shade700,
+        backgroundColor: isError ? Colors.red.shade700 : Colors.green.shade800,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -246,24 +191,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isApiOnline = _healthData != null && _healthData!['status'] == 'ok';
-    final dbConnected = _healthData?['database']?['connected'] == true;
-    final cloudinaryConfigured = _healthData?['cloudinary']?['configured'] == true;
+    final isInitialized = FirebaseService.isInitialized;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
         title: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withAlpha(30),
+                color: const Color(0xFFFF9100).withAlpha(35),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                Icons.hub_rounded,
-                color: Theme.of(context).colorScheme.primary,
+              child: const Icon(
+                Icons.local_fire_department_rounded,
+                color: Color(0xFFE65100),
               ),
             ),
             const SizedBox(width: 12),
@@ -278,7 +221,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'Flutter • Express • PostgreSQL • Cloudinary',
+                    'Flutter • Cloud Firestore • Firebase Storage • Auth',
                     style: TextStyle(fontSize: 10, color: Colors.grey),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -288,77 +231,106 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         actions: [
-          // Live API Status Badge
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 12),
             child: Chip(
               avatar: CircleAvatar(
                 radius: 5,
-                backgroundColor: isApiOnline ? Colors.green : Colors.red,
+                backgroundColor: isInitialized ? Colors.green : const Color(0xFFE65100),
               ),
               label: Text(
-                isApiOnline ? 'API Online' : 'API Offline',
-                style: const TextStyle(fontSize: 12),
+                isInitialized ? 'Firebase Connected' : 'Firebase Ready (Demo Mode)',
+                style: const TextStyle(fontSize: 11),
               ),
-              backgroundColor: isApiOnline ? Colors.green.shade50 : Colors.red.shade50,
+              backgroundColor: isInitialized ? Colors.green.shade50 : Colors.orange.shade50,
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
-            onPressed: _refreshAll,
-          ),
-          const SizedBox(width: 8),
         ],
       ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1000),
-          child: RefreshIndicator(
-            onRefresh: _refreshAll,
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                // System Architecture / Health Card
-                _buildSystemStatusCard(isApiOnline, dbConnected, cloudinaryConfigured),
-                const SizedBox(height: 16),
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              // System Architecture / Firebase Status Card
+              _buildFirebaseStatusCard(isInitialized),
+              const SizedBox(height: 16),
 
-                // File Upload Card
-                _buildUploadCard(),
-                const SizedBox(height: 24),
+              // Upload Card
+              _buildUploadCard(),
+              const SizedBox(height: 24),
 
-                // Uploaded Files Gallery Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Processed Files (${_files.length})',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+              // Real-time Firestore Stream Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Icon(Icons.stream_rounded, size: 20, color: Color(0xFFE65100)),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Cloud Firestore Stream',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                            overflow: TextOverflow.ellipsis,
                           ),
+                        ),
+                      ],
                     ),
-                    if (_isLoadingFiles)
-                      const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 12),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.green.shade200),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(radius: 4, backgroundColor: Colors.green),
+                        SizedBox(width: 6),
+                        Text(
+                          'Real-time Active',
+                          style: TextStyle(fontSize: 11, color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
 
-                // File Grid or Empty State
-                _buildFilesView(),
-              ],
-            ),
+              // Real-time Firestore Stream List
+              StreamBuilder<List<FileItem>>(
+                stream: FirebaseService.getFilesStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting &&
+                      !snapshot.hasData) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  final files = snapshot.data ?? [];
+                  return _buildFilesView(files);
+                },
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSystemStatusCard(
-      bool isApiOnline, bool dbConnected, bool cloudinaryConfigured) {
+  Widget _buildFirebaseStatusCard(bool isInitialized) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -367,58 +339,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Row(
               children: [
-                const Icon(Icons.dashboard_customize_outlined, size: 20),
+                const Icon(Icons.cloud_done_outlined, size: 20),
                 const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Stack Status & Configuration',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
+                Text(
+                  'Firebase Architecture & Services',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
-                if (_isLoadingHealth)
-                  const SizedBox(
-                    width: 14,
-                    height: 14,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
               ],
             ),
-            if (_statusError != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Note: $_statusError',
-                style: const TextStyle(fontSize: 11, color: Colors.red),
-              ),
-            ],
-            const Divider(height: 24),
+            const Divider(height: 20),
             Row(
               children: [
                 Expanded(
                   child: _buildServicePill(
-                    title: 'Express API',
-                    subtitle: isApiOnline ? 'Port 5000' : 'Offline',
-                    icon: Icons.api,
-                    color: isApiOnline ? Colors.green : Colors.red,
+                    title: 'Cloud Firestore',
+                    subtitle: 'Real-time NoSQL DB',
+                    icon: Icons.storage_rounded,
+                    color: const Color(0xFFFFA000),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildServicePill(
-                    title: 'PostgreSQL (pg)',
-                    subtitle: dbConnected ? 'Active' : 'Fallback / Pending',
-                    icon: Icons.storage,
-                    color: dbConnected ? Colors.green : Colors.amber.shade800,
+                    title: 'Firebase Storage',
+                    subtitle: 'Secure File Storage',
+                    icon: Icons.cloud_upload_rounded,
+                    color: const Color(0xFF0288D1),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildServicePill(
-                    title: 'Cloudinary',
-                    subtitle: cloudinaryConfigured ? 'Configured' : 'Dev / Demo Mode',
-                    icon: Icons.cloud_upload_outlined,
-                    color: cloudinaryConfigured ? Colors.green : Colors.blue,
+                    title: 'Firebase Auth',
+                    subtitle: 'Identity & Security',
+                    icon: Icons.verified_user_rounded,
+                    color: const Color(0xFF43A047),
                   ),
                 ),
               ],
@@ -478,11 +435,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Upload & Process File',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                Expanded(
+                  child: Text(
+                    'Upload to Firebase Storage',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 TextButton.icon(
                   onPressed: _isUploading ? null : _uploadDemoImage,
@@ -536,6 +496,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       : const Icon(Icons.cloud_upload),
                   label: Text(_isUploading ? 'Uploading...' : 'Upload'),
                   style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFE65100),
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   ),
                 ),
@@ -560,8 +522,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildFilesView() {
-    if (_files.isEmpty) {
+  Widget _buildFilesView(List<FileItem> files) {
+    if (files.isEmpty) {
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(40),
@@ -574,12 +536,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 12),
               const Text(
-                'No files uploaded yet',
+                'No files in Firestore collection yet',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 6),
               const Text(
-                'Upload an image or document above or click "1-Click Demo Upload" to test the pipeline.',
+                'Upload an image or document above or click "1-Click Demo Upload" to test the Firebase real-time stream.',
                 style: TextStyle(color: Colors.grey, fontSize: 13),
                 textAlign: TextAlign.center,
               ),
@@ -601,9 +563,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             mainAxisSpacing: 12,
             childAspectRatio: 0.9,
           ),
-          itemCount: _files.length,
+          itemCount: files.length,
           itemBuilder: (context, index) {
-            final file = _files[index];
+            final file = files[index];
             return _buildFileCard(file);
           },
         );
@@ -612,10 +574,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildFileCard(FileItem file) {
-    final previewUrl = file.thumbnailUrl ?? file.fileUrl;
     final isImage = ['jpg', 'jpeg', 'png', 'webp', 'gif'].contains(
       (file.format ?? '').toLowerCase(),
-    ) || previewUrl.contains('image');
+    ) || file.fileUrl.contains('image');
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -629,7 +590,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               width: double.infinity,
               child: isImage
                   ? Image.network(
-                      previewUrl,
+                      file.fileUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Center(
                         child: Column(
@@ -679,13 +640,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.indigo.shade50,
+                        color: Colors.orange.shade50,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         (file.format ?? 'FILE').toUpperCase(),
                         style: TextStyle(
-                          color: Colors.indigo.shade800,
+                          color: Colors.orange.shade900,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
@@ -706,15 +667,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.copy, size: 18),
-                      tooltip: 'Copy Cloudinary URL',
+                      tooltip: 'Copy Firebase Storage URL',
                       onPressed: () {
                         Clipboard.setData(ClipboardData(text: file.fileUrl));
-                        _showSnackbar('URL copied to clipboard!');
+                        _showSnackbar('Download URL copied to clipboard!');
                       },
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                      tooltip: 'Delete File',
+                      tooltip: 'Delete Document & File',
                       onPressed: () => _deleteFile(file),
                     ),
                   ],
