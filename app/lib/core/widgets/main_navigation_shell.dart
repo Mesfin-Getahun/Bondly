@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
+import '../../features/connections/presentation/pages/connections_page.dart';
+import '../../features/followups/presentation/pages/followups_page.dart';
 import '../../features/messaging/presentation/pages/messaging_page.dart';
 import '../../features/relationships/presentation/pages/relationships_page.dart';
 import '../../features/users/presentation/pages/users_page.dart';
@@ -94,6 +96,19 @@ class _DashboardView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Bondly', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
+          IconButton(
+            tooltip: 'Connections & Friends',
+            icon: const Icon(Icons.people_outline_rounded),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ConnectionsPage(
+                  currentUserId: authController.currentUser?.id,
+                  currentUserName: displayName,
+                ),
+              ),
+            ),
+          ),
           IconButton(
             tooltip: 'Sign Out',
             icon: const Icon(Icons.logout_rounded),
@@ -220,7 +235,14 @@ class _DashboardView extends StatelessWidget {
                 title: 'Follow-ups',
                 subtitle: 'Reminders & cadence',
                 color: const Color(0xFF3F51B5),
-                onTap: () => onNavigate(1),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => FollowupsPage(
+                      currentUserId: authController.currentUser?.id,
+                    ),
+                  ),
+                ),
               ),
               _ModuleQuickCard(
                 icon: Icons.chat_bubble_outline_rounded,
