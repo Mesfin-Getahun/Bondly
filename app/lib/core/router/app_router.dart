@@ -49,7 +49,13 @@ class AppRouter {
       case RoutePaths.notifications:
         return MaterialPageRoute(builder: (_) => const NotificationsPage());
       case RoutePaths.groups:
-        return MaterialPageRoute(builder: (_) => const GroupsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => GroupsPage(
+            currentUserId: args?['currentUserId'],
+            currentUserName: args?['currentUserName'],
+          ),
+        );
       case RoutePaths.goals:
         return MaterialPageRoute(builder: (_) => const GoalsPage());
       case RoutePaths.projects:

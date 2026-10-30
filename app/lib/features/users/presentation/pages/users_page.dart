@@ -252,6 +252,21 @@ class _UsersPageState extends State<UsersPage> {
                 },
               ),
               _SettingsTile(
+                icon: Icons.diversity_3_outlined,
+                title: 'Circles & Groups',
+                subtitle: 'Organize friend circles, group members, and roles',
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/groups',
+                    arguments: {
+                      'currentUserId': user?.id,
+                      'currentUserName': displayName,
+                    },
+                  );
+                },
+              ),
+              _SettingsTile(
                 icon: Icons.qr_code_2_rounded,
                 title: 'Invitation Links & Codes',
                 subtitle: 'Share private invite links and redeem codes',
