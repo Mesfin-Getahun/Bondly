@@ -10,3 +10,7 @@ class ServerFailure extends Failure {
 class PrivacyAuthorizationFailure extends Failure {
   const PrivacyAuthorizationFailure([super.message = 'Access to private relationship record denied.']);
 }
+
+class AuthFailure extends Failure {
+  const AuthFailure([super.message = 'Authentication failed.']);
+}

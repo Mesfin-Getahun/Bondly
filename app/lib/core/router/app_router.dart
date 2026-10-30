@@ -1,14 +1,53 @@
 import 'package:flutter/material.dart';
+import '../../features/connections/presentation/pages/connections_page.dart';
+import '../../features/followups/presentation/pages/followups_page.dart';
+import '../../features/goals/presentation/pages/goals_page.dart';
+import '../../features/groups/presentation/pages/groups_page.dart';
+import '../../features/insights/presentation/pages/insights_page.dart';
+import '../../features/invitations/presentation/pages/invitations_page.dart';
+import '../../features/messaging/presentation/pages/messaging_page.dart';
+import '../../features/notifications/presentation/pages/notifications_page.dart';
+import '../../features/privacy/presentation/pages/privacy_page.dart';
+import '../../features/projects/presentation/pages/projects_page.dart';
+import '../../features/relationships/presentation/pages/relationships_page.dart';
+import '../../features/reports/presentation/pages/reports_page.dart';
+import '../../features/users/presentation/pages/users_page.dart';
 import 'route_paths.dart';
 
 class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case RoutePaths.home:
+      case RoutePaths.users:
+        return MaterialPageRoute(builder: (_) => const UsersPage());
+      case RoutePaths.relationships:
+        return MaterialPageRoute(builder: (_) => const RelationshipsPage());
+      case RoutePaths.messaging:
+        return MaterialPageRoute(builder: (_) => const MessagingPage());
+      case RoutePaths.connections:
+        return MaterialPageRoute(builder: (_) => const ConnectionsPage());
+      case RoutePaths.invitations:
+        return MaterialPageRoute(builder: (_) => const InvitationsPage());
+      case RoutePaths.followups:
+        return MaterialPageRoute(builder: (_) => const FollowupsPage());
+      case RoutePaths.notifications:
+        return MaterialPageRoute(builder: (_) => const NotificationsPage());
+      case RoutePaths.groups:
+        return MaterialPageRoute(builder: (_) => const GroupsPage());
+      case RoutePaths.goals:
+        return MaterialPageRoute(builder: (_) => const GoalsPage());
+      case RoutePaths.projects:
+        return MaterialPageRoute(builder: (_) => const ProjectsPage());
+      case RoutePaths.reports:
+        return MaterialPageRoute(builder: (_) => const ReportsPage());
+      case RoutePaths.privacy:
+        return MaterialPageRoute(builder: (_) => const PrivacyPage());
+      case RoutePaths.insights:
+        return MaterialPageRoute(builder: (_) => const InsightsPage());
       default:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(child: Text('Bondly Navigation')),
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Not Found')),
+            body: Center(child: Text('No route defined for ${settings.name}')),
           ),
         );
     }
