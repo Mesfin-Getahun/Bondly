@@ -333,6 +333,21 @@ class _UsersPageState extends State<UsersPage> {
                   Navigator.pushNamed(context, '/privacy');
                 },
               ),
+              _SettingsTile(
+                icon: Icons.report_problem_outlined,
+                title: 'Safety & Moderation Reports',
+                subtitle: 'Submit confidential reports and track status',
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/reports',
+                    arguments: {
+                      'currentUserId': user?.id,
+                      'currentUserName': displayName,
+                    },
+                  );
+                },
+              ),
 
               const SizedBox(height: 20),
 

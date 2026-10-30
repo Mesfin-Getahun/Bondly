@@ -1,5 +1,18 @@
-/// Feature: Reports - Domain Repository Contract
-/// User reports and moderation.
+import '../entities/reports_entity.dart';
+
+/// Feature: Reports - Repository Interface
 abstract class ReportsRepository {
-  // Repository contract placeholder
+  /// Stream reports filed by the current user
+  Stream<List<ReportEntity>> watchReportsByReporter(String reporterId);
+
+  /// Submit a new moderation or user report
+  Future<ReportEntity> submitReport({
+    required String reporterId,
+    required String reporterName,
+    String? targetUserId,
+    String? targetUserName,
+    String targetType = 'user',
+    required String reason,
+    required String description,
+  });
 }
