@@ -32,7 +32,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         onNavigate: (index) => setState(() => _currentIndex = index),
       ),
       RelationshipsPage(userId: user?.id),
-      const MessagingPage(),
+      MessagingPage(currentUserId: user?.id),
       UsersPage(authController: widget.authController),
     ];
 
