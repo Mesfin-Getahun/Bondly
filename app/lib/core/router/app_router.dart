@@ -57,7 +57,13 @@ class AppRouter {
           ),
         );
       case RoutePaths.goals:
-        return MaterialPageRoute(builder: (_) => const GoalsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => GoalsPage(
+            currentUserId: args?['currentUserId'],
+            currentUserName: args?['currentUserName'],
+          ),
+        );
       case RoutePaths.projects:
         return MaterialPageRoute(builder: (_) => const ProjectsPage());
       case RoutePaths.reports:
