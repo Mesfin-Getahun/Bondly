@@ -1,94 +1,144 @@
-# Bondly — Flutter + Firebase
+# Bondly
 
-Bondly is a modern, cross-platform Flutter application built with direct **Firebase** integration:
-- ⚡ **Cloud Firestore**: Real-time NoSQL database with live stream subscriptions
-- 📁 **Firebase Storage**: Secure file and image storage with download URLs
-- 🔐 **Firebase Auth**: User identity management and secure access
-- 🎨 **Material 3 UI**: Clean dashboard with 1-click test upload, file picker, and real-time feed
+**Bondly** is a cross-platform mobile application designed for nurturing meaningful friendships, private relationship tracking, messaging, reminders, and collaboration.
 
 ---
 
-## 🏗️ Architecture
+## 🛠️ Tech Stack
 
-```
-Bondly/
-├── lib/
-│   ├── firebase_options.dart      # Platform FirebaseOptions (Web, Android, iOS, Windows, macOS)
-│   ├── models/
-│   │   └── file_item.dart         # File item model with Firestore document serialization
-│   ├── services/
-│   │   └── firebase_service.dart  # Firestore streams, Storage uploads, Auth, & offline simulator
-│   └── main.dart                  # Material 3 UI with live Firestore StreamBuilder
-├── test/
-│   └── widget_test.dart           # Automated Flutter widget test suite
-├── web/                           # Flutter Web support
-├── android/                       # Android native project
-├── ios/                           # iOS native project
-├── windows/                       # Windows Desktop support
-└── pubspec.yaml                   # Flutter dependencies
+- **Mobile Client:** Flutter (Material 3)
+- **Backend Infrastructure:** Firebase
+- **Database:** Cloud Firestore
+- **Authentication:** Firebase Authentication
+- **File & Media Storage:** Firebase Storage
+- **Push Notifications:** Firebase Cloud Messaging (FCM)
+- **Backend Logic & Triggers:** Firebase Cloud Functions (TypeScript)
+
+---
+
+## 📁 Project Architecture & Folder Structure
+
+Bondly follows a scalable **feature-first Clean Architecture** layout. Each feature module is self-contained with decoupled `data`, `domain`, and `presentation` layers.
+
+```text
+bondly/
+├── app/                                    # Flutter Mobile & Web Client
+│   └── lib/
+│       ├── main.dart                       # App entry point (Firebase initialization & bootstrap)
+│       ├── app.dart                        # Root BondlyApp widget (Theme, Routing, AppConfig)
+│       ├── core/                           # Cross-cutting foundational modules
+│       │   ├── config/                     # Environment and app configuration
+│       │   ├── constants/                  # Global constants & Firestore collection names
+│       │   ├── errors/                     # App-wide failures and exceptions
+│       │   ├── firebase/                   # Firebase initialization & options
+│       │   ├── router/                     # Navigation route paths & generator
+│       │   ├── theme/                      # AppColors, typography, & ThemeData
+│       │   ├── utils/                      # Common date utilities & form validators
+│       │   └── widgets/                    # Core widgets (scaffold, loading indicator)
+│       ├── shared/                         # Reusable domain-agnostic components
+│       │   ├── models/                     # Shared models (e.g. UserSummary)
+│       │   ├── services/                   # Analytics, notification services
+│       │   └── widgets/                    # Common UI components (buttons, avatars)
+│       └── features/                       # 14 Independent Feature Modules
+│           ├── auth/                       # Registration, login, authentication, and sessions
+│           ├── users/                      # User profiles and account settings
+│           ├── connections/                # Friend requests, connections, and blocking
+│           ├── invitations/                # Private invitation links and codes
+│           ├── messaging/                  # Direct messages and conversations
+│           ├── relationships/              # Private contacts, notes, and interaction history [STRICT PRIVACY]
+│           ├── followups/                  # Follow-up schedules and reminders [STRICT PRIVACY]
+│           ├── notifications/              # Push notification handling
+│           ├── groups/                     # Groups, memberships, and permissions
+│           ├── goals/                      # Personal and shared goals
+│           ├── projects/                   # Projects, tasks, and milestones
+│           ├── reports/                    # User reports and moderation
+│           ├── privacy/                    # Privacy settings, data export, consent, account deletion
+│           └── insights/                   # Relationship insights and AI-powered recommendations
+├── functions/                              # Firebase Cloud Functions (TypeScript Backend)
+│   └── src/
+│       ├── index.ts                        # Master functions export entry point
+│       ├── shared/                         # Shared backend config, constants, middleware, utils
+│       │   ├── config/
+│       │   ├── constants/
+│       │   ├── middleware/                 # Auth verification middleware
+│       │   └── utils/
+│       └── features/                       # 14 Backend Feature Triggers & Handlers
+│           ├── auth/
+│           ├── users/
+│           ├── connections/
+│           ├── invitations/
+│           ├── messaging/
+│           ├── relationships/              # Owner-only privacy enforcement
+│           ├── followups/                  # Private scheduler enforcement
+│           ├── notifications/
+│           ├── groups/
+│           ├── goals/
+│           ├── projects/
+│           ├── reports/
+│           ├── privacy/
+│           └── insights/
+├── firebase.json                           # Firebase CLI configuration
+├── firestore.rules                         # Security rules with strict ownership rules
+├── firestore.indexes.json                  # Firestore compound query indexes
+├── storage.rules                           # Firebase Storage access rules
+├── .gitignore                              # Git exclusion rules
+└── README.md                               # Project documentation
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🧩 Flutter Feature Module Convention
 
-### 1. Run the App Immediately (Demo / Simulator Mode)
-The app is configured to compile and run out of the box with zero setup:
+Every feature folder inside `app/lib/features/` follows this standard Clean Architecture convention:
+
+```text
+feature_name/
+├── data/
+│   ├── datasources/        # Remote and local data source interfaces & implementations
+│   ├── models/             # Data transfer models with serialization (toMap/fromMap)
+│   └── repositories/       # Concrete repository implementations
+├── domain/
+│   ├── entities/           # Pure business models independent of frameworks
+│   ├── repositories/       # Abstract repository interfaces (contracts)
+│   └── usecases/           # Individual business actions / use cases
+└── presentation/
+    ├── controllers/        # State management / controllers / notifiers
+    ├── pages/              # Screen-level UI widgets
+    └── widgets/            # Feature-specific reusable UI components
+```
+
+---
+
+## 🔒 Important Privacy Architecture
+
+> **CRITICAL PRIVACY REQUIREMENT**
+> 
+> Bondly's relationship contacts, notes, personal interaction history, and follow-up schedules are **confidential and visible ONLY to their owner**.
+> 
+> Connecting with another user or forming mutual friendships **must NEVER grant access to that private data**.
+> 
+> - **Firestore Rules (`firestore.rules`):** Relationship contacts (`/users/{userId}/relationships/{relationshipId}`) and follow-ups (`/users/{userId}/followups/{followupId}`) enforce `request.auth.uid == userId` for all read and write operations.
+> - **Storage Rules (`storage.rules`):** Private voice notes and attachments are restricted under `/users/{userId}/private/{allPaths=**}` and accessible only by `userId`.
+> - **Backend Logic:** Cloud Functions and data sources treat private relationship data as strictly isolated subcollections per authenticated user.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- [Flutter SDK](https://flutter.dev) (v3.11.0+)
+- [Node.js](https://nodejs.org) (v18+) & [Firebase CLI](https://firebase.google.com/docs/cli)
+
+### Running Flutter App
 ```bash
-# Run on Web (Chrome):
-flutter run -d chrome
-
-# Or run on Windows Desktop:
-flutter run -d windows
+cd app
+flutter pub get
+flutter run
 ```
 
-You can test the full upload and real-time UI by clicking the **"1-Click Demo Upload"** button or selecting any file.
-
----
-
-### 2. Connect to Your Firebase Console Project
-
-To link this app to your live Firebase project:
-
-1. **Install Firebase CLI** (if not already installed):
-   ```bash
-   npm install -g firebase-tools
-   firebase login
-   ```
-
-2. **Install FlutterFire CLI**:
-   ```bash
-   dart pub global activate flutterfire_cli
-   ```
-
-3. **Configure your project**:
-   ```bash
-   flutterfire configure
-   ```
-   Select your Firebase project and platforms. This will automatically update `lib/firebase_options.dart` with your real production API keys and project settings.
-
-4. **Enable Services in [Firebase Console](https://console.firebase.google.com)**:
-   - **Authentication**: Enable *Anonymous* or *Email/Password* provider.
-   - **Cloud Firestore**: Create database in production or test mode.
-   - **Firebase Storage**: Create storage bucket.
-
----
-
-## 🧪 Verification & Testing
-
-- **Static Analysis**:
-  ```bash
-  flutter analyze
-  ```
-  *(0 issues found)*
-
-- **Widget & Unit Tests**:
-  ```bash
-  flutter test
-  ```
-  *(All tests passed)*
-
-- **Production Web Build**:
-  ```bash
-  flutter build web
-  ```
+### Building Cloud Functions
+```bash
+cd functions
+npm install
+npm run build
+```

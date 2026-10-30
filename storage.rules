@@ -1,0 +1,31 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Public avatars and profile images
+    match /users/{userId}/public/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId);
+    }
+
+    // CRITICAL PRIVACY: Private relationship attachments, notes, & voice memos
+    // Strictly confidential - visible only to owner
+    match /users/{userId}/private/{allPaths=**} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Message attachments
+    match /messages/{conversationId}/{allPaths=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}

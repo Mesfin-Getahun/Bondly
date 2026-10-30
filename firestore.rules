@@ -1,0 +1,130 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // -------------------------------------------------------------------------
+    // 1. Users Module (Profiles & Settings)
+    // -------------------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId);
+
+      // -----------------------------------------------------------------------
+      // 6. Relationships Module (CRITICAL PRIVACY REQUIREMENT)
+      // Private relationship contacts, interaction history, personal notes,
+      // and logs are strictly confidential and visible ONLY to their owner.
+      // Connecting with another user MUST NEVER grant access to this subcollection.
+      // -----------------------------------------------------------------------
+      match /relationships/{relationshipId} {
+        allow read, write: if isOwner(userId);
+
+        match /notes/{noteId} {
+          allow read, write: if isOwner(userId);
+        }
+
+        match /interactions/{interactionId} {
+          allow read, write: if isOwner(userId);
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // 7. Followups Module (CRITICAL PRIVACY REQUIREMENT)
+      // Personal follow-up schedules and reminders are private to the user.
+      // -----------------------------------------------------------------------
+      match /followups/{followupId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // -----------------------------------------------------------------------
+      // 13. Privacy Module
+      // User consent, data export records, and deletion requests.
+      // -----------------------------------------------------------------------
+      match /privacy/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // -----------------------------------------------------------------------
+      // 14. Insights Module
+      // Private relationship insights and AI-powered recommendations.
+      // -----------------------------------------------------------------------
+      match /insights/{insightId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 3. Connections Module (Friend requests, connections, blocking)
+    // -------------------------------------------------------------------------
+    match /connections/{connectionId} {
+      // Placeholder: Allow involved users to read/update
+      allow read, write: if isAuthenticated() && 
+        (request.auth.uid == resource.data.userA || request.auth.uid == resource.data.userB ||
+         request.auth.uid == request.resource.data.userA || request.auth.uid == request.resource.data.userB);
+    }
+
+    // -------------------------------------------------------------------------
+    // 4. Invitations Module (Private invitation links and codes)
+    // -------------------------------------------------------------------------
+    match /invitations/{invitationId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == request.resource.data.senderId;
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. Messaging Module (Conversations and direct messages)
+    // -------------------------------------------------------------------------
+    match /conversations/{conversationId} {
+      allow read, write: if isAuthenticated() && request.auth.uid in resource.data.participants;
+
+      match /messages/{messageId} {
+        allow read, write: if isAuthenticated();
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 8. Notifications Module
+    // -------------------------------------------------------------------------
+    match /notifications/{notificationId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == resource.data.recipientId;
+    }
+
+    // -------------------------------------------------------------------------
+    // 9. Groups Module
+    // -------------------------------------------------------------------------
+    match /groups/{groupId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // -------------------------------------------------------------------------
+    // 10. Goals Module (Personal and shared goals)
+    // -------------------------------------------------------------------------
+    match /goals/{goalId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // -------------------------------------------------------------------------
+    // 11. Projects Module (Projects, tasks, milestones)
+    // -------------------------------------------------------------------------
+    match /projects/{projectId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // -------------------------------------------------------------------------
+    // 12. Reports Module (Moderation and user reports)
+    // -------------------------------------------------------------------------
+    match /reports/{reportId} {
+      allow create: if isAuthenticated();
+      allow read, update, delete: if false; // Admin/Cloud Functions only
+    }
+  }
+}

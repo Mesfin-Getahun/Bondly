@@ -1,0 +1,18 @@
+export const COLLECTIONS = {
+  USERS: 'users',
+  RELATIONSHIPS: 'relationships',
+  NOTES: 'notes',
+  INTERACTIONS: 'interactions',
+  FOLLOWUPS: 'followups',
+  CONNECTIONS: 'connections',
+  INVITATIONS: 'invitations',
+  CONVERSATIONS: 'conversations',
+  MESSAGES: 'messages',
+  NOTIFICATIONS: 'notifications',
+  GROUPS: 'groups',
+  GOALS: 'goals',
+  PROJECTS: 'projects',
+  REPORTS: 'reports',
+  PRIVACY: 'privacy',
+  INSIGHTS: 'insights',
+} as const;
