@@ -86,7 +86,12 @@ class AppRouter {
           ),
         );
       case RoutePaths.privacy:
-        return MaterialPageRoute(builder: (_) => const PrivacyPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => PrivacyPage(
+            currentUserId: args?['currentUserId'],
+          ),
+        );
       case RoutePaths.insights:
         return MaterialPageRoute(builder: (_) => const InsightsPage());
       default:

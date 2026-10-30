@@ -330,7 +330,13 @@ class _UsersPageState extends State<UsersPage> {
                 title: 'Privacy & Data Export',
                 subtitle: 'Manage consent, export private records, or delete account',
                 onTap: () {
-                  Navigator.pushNamed(context, '/privacy');
+                  Navigator.pushNamed(
+                    context,
+                    '/privacy',
+                    arguments: {
+                      'currentUserId': user?.id,
+                    },
+                  );
                 },
               ),
               _SettingsTile(
