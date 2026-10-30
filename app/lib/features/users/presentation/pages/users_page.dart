@@ -282,6 +282,21 @@ class _UsersPageState extends State<UsersPage> {
                 },
               ),
               _SettingsTile(
+                icon: Icons.rocket_launch_outlined,
+                title: 'Projects & Initiatives',
+                subtitle: 'Collaborative projects, shared tasks, and milestones',
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/projects',
+                    arguments: {
+                      'currentUserId': user?.id,
+                      'currentUserName': displayName,
+                    },
+                  );
+                },
+              ),
+              _SettingsTile(
                 icon: Icons.qr_code_2_rounded,
                 title: 'Invitation Links & Codes',
                 subtitle: 'Share private invite links and redeem codes',
