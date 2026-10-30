@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Feature: Users - Presentation Widget
-/// User profiles and account settings.
+/// Users feature widget placeholder.
 class UsersWidget extends StatelessWidget {
   const UsersWidget({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return const Text('Users Component');
-  }
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }
