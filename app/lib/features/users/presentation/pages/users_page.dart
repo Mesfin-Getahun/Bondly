@@ -92,11 +92,26 @@ class UsersPage extends StatelessWidget {
 
           // Settings Section
           const Text(
-            'Account & Privacy',
+            'Account & Social',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 10),
 
+          _SettingsTile(
+            icon: Icons.people_outline_rounded,
+            title: 'Connections & Friends',
+            subtitle: 'Manage friend requests, mutual connections, and invites',
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/connections',
+                arguments: {
+                  'currentUserId': user?.id,
+                  'currentUserName': displayName,
+                },
+              );
+            },
+          ),
           _SettingsTile(
             icon: Icons.shield_outlined,
             title: 'Privacy & Data Export',

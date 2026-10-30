@@ -24,7 +24,13 @@ class AppRouter {
       case RoutePaths.messaging:
         return MaterialPageRoute(builder: (_) => const MessagingPage());
       case RoutePaths.connections:
-        return MaterialPageRoute(builder: (_) => const ConnectionsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => ConnectionsPage(
+            currentUserId: args?['currentUserId'],
+            currentUserName: args?['currentUserName'],
+          ),
+        );
       case RoutePaths.invitations:
         return MaterialPageRoute(builder: (_) => const InvitationsPage());
       case RoutePaths.followups:
