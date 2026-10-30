@@ -312,6 +312,20 @@ class _UsersPageState extends State<UsersPage> {
                 },
               ),
               _SettingsTile(
+                icon: Icons.notifications_none_rounded,
+                title: 'Notification Center',
+                subtitle: 'View in-app alerts and activity notifications',
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/notifications',
+                    arguments: {
+                      'currentUserId': user?.id,
+                    },
+                  );
+                },
+              ),
+              _SettingsTile(
                 icon: Icons.shield_outlined,
                 title: 'Privacy & Data Export',
                 subtitle: 'Manage consent, export private records, or delete account',

@@ -47,7 +47,12 @@ class AppRouter {
           ),
         );
       case RoutePaths.notifications:
-        return MaterialPageRoute(builder: (_) => const NotificationsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => NotificationsPage(
+            currentUserId: args?['currentUserId'],
+          ),
+        );
       case RoutePaths.groups:
         final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(

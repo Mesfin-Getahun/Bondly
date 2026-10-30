@@ -3,6 +3,7 @@ import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/connections/presentation/pages/connections_page.dart';
 import '../../features/followups/presentation/pages/followups_page.dart';
 import '../../features/messaging/presentation/pages/messaging_page.dart';
+import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/relationships/presentation/pages/relationships_page.dart';
 import '../../features/users/presentation/pages/users_page.dart';
 import '../theme/app_colors.dart';
@@ -96,6 +97,18 @@ class _DashboardView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Bondly', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
+          IconButton(
+            tooltip: 'Notifications',
+            icon: const Icon(Icons.notifications_none_rounded),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => NotificationsPage(
+                  currentUserId: authController.currentUser?.id,
+                ),
+              ),
+            ),
+          ),
           IconButton(
             tooltip: 'Connections & Friends',
             icon: const Icon(Icons.people_outline_rounded),

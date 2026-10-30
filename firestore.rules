@@ -100,7 +100,9 @@ service cloud.firestore {
     // 8. Notifications Module
     // -------------------------------------------------------------------------
     match /notifications/{notificationId} {
-      allow read, write: if isAuthenticated() && request.auth.uid == resource.data.recipientId;
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.recipientId;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.recipientId;
     }
 
     // -------------------------------------------------------------------------
