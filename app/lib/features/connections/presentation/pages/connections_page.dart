@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../invitations/presentation/pages/invitations_page.dart';
 import '../../../messaging/data/repositories/messaging_repository_impl.dart';
 import '../../../messaging/domain/usecases/get_messaging_usecase.dart';
 import '../../../messaging/presentation/controllers/messaging_controller.dart';
@@ -111,6 +112,19 @@ class _ConnectionsPageState extends State<ConnectionsPage> with SingleTickerProv
       appBar: AppBar(
         title: const Text('Connections', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
+          IconButton(
+            tooltip: 'Invite Codes',
+            icon: const Icon(Icons.qr_code_2_rounded),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => InvitationsPage(
+                  currentUserId: widget.currentUserId,
+                  currentUserName: widget.currentUserName,
+                ),
+              ),
+            ),
+          ),
           IconButton(
             tooltip: 'Add Friend',
             icon: const Icon(Icons.person_add_rounded),

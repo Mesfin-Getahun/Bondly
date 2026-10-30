@@ -32,9 +32,20 @@ class AppRouter {
           ),
         );
       case RoutePaths.invitations:
-        return MaterialPageRoute(builder: (_) => const InvitationsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => InvitationsPage(
+            currentUserId: args?['currentUserId'],
+            currentUserName: args?['currentUserName'],
+          ),
+        );
       case RoutePaths.followups:
-        return MaterialPageRoute(builder: (_) => const FollowupsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => FollowupsPage(
+            currentUserId: args?['currentUserId'],
+          ),
+        );
       case RoutePaths.notifications:
         return MaterialPageRoute(builder: (_) => const NotificationsPage());
       case RoutePaths.groups:
