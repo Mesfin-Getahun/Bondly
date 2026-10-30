@@ -297,6 +297,20 @@ class _UsersPageState extends State<UsersPage> {
                 },
               ),
               _SettingsTile(
+                icon: Icons.auto_awesome_rounded,
+                title: 'AI Relationship Insights',
+                subtitle: 'Health scores, cadence recommendations, and balance',
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/insights',
+                    arguments: {
+                      'currentUserId': user?.id,
+                    },
+                  );
+                },
+              ),
+              _SettingsTile(
                 icon: Icons.qr_code_2_rounded,
                 title: 'Invitation Links & Codes',
                 subtitle: 'Share private invite links and redeem codes',

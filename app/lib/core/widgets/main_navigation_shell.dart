@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/connections/presentation/pages/connections_page.dart';
 import '../../features/followups/presentation/pages/followups_page.dart';
+import '../../features/insights/presentation/pages/insights_page.dart';
 import '../../features/messaging/presentation/pages/messaging_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/relationships/presentation/pages/relationships_page.dart';
@@ -270,6 +271,34 @@ class _DashboardView extends StatelessWidget {
                 subtitle: 'Data & account settings',
                 color: const Color(0xFFFF9800),
                 onTap: () => onNavigate(3),
+              ),
+              _ModuleQuickCard(
+                icon: Icons.auto_awesome_rounded,
+                title: 'Insights & Health',
+                subtitle: 'AI advice & connection health',
+                color: const Color(0xFF9C27B0),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => InsightsPage(
+                      currentUserId: authController.currentUser?.id,
+                    ),
+                  ),
+                ),
+              ),
+              _ModuleQuickCard(
+                icon: Icons.flag_outlined,
+                title: 'Goals & Circles',
+                subtitle: 'Shared initiatives & targets',
+                color: const Color(0xFF00BCD4),
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  '/goals',
+                  arguments: {
+                    'currentUserId': authController.currentUser?.id,
+                    'currentUserName': displayName,
+                  },
+                ),
               ),
             ],
           ),

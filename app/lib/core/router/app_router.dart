@@ -93,7 +93,12 @@ class AppRouter {
           ),
         );
       case RoutePaths.insights:
-        return MaterialPageRoute(builder: (_) => const InsightsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => InsightsPage(
+            currentUserId: args?['currentUserId'],
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
