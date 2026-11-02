@@ -1,11 +1,11 @@
 {
-    "name": "frontend",
-    "short_name": "frontend",
+    "name": "Bondly",
+    "short_name": "Bondly",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0A0D14",
+    "theme_color": "#FF6B50",
+    "description": "Meaningful connections & private relationship tracking",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
