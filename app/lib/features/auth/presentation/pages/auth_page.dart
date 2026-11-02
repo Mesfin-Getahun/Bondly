@@ -199,8 +199,9 @@ class _AuthPageState extends State<AuthPage> {
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: AppColors.surface,
                             borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: AppColors.border, width: 1),
                           ),
                           child: Row(
                             children: [
@@ -216,17 +217,9 @@ class _AuthPageState extends State<AuthPage> {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(vertical: 10),
                                     decoration: BoxDecoration(
-                                      color: !_isSignUp ? Colors.white : Colors.transparent,
+                                      color: !_isSignUp ? AppColors.surfaceElevated : Colors.transparent,
                                       borderRadius: BorderRadius.circular(10),
-                                      boxShadow: !_isSignUp
-                                          ? [
-                                              BoxShadow(
-                                                color: Colors.black.withAlpha(12),
-                                                blurRadius: 4,
-                                                offset: const Offset(0, 2),
-                                              )
-                                            ]
-                                          : null,
+                                      border: !_isSignUp ? Border.all(color: AppColors.border, width: 1) : null,
                                     ),
                                     child: Center(
                                       child: Text(
@@ -234,7 +227,7 @@ class _AuthPageState extends State<AuthPage> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.w600,
                                           color: !_isSignUp
-                                              ? AppColors.primaryDark
+                                              ? AppColors.primary
                                               : AppColors.textSecondary,
                                         ),
                                       ),
@@ -254,17 +247,9 @@ class _AuthPageState extends State<AuthPage> {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(vertical: 10),
                                     decoration: BoxDecoration(
-                                      color: _isSignUp ? Colors.white : Colors.transparent,
+                                      color: _isSignUp ? AppColors.surfaceElevated : Colors.transparent,
                                       borderRadius: BorderRadius.circular(10),
-                                      boxShadow: _isSignUp
-                                          ? [
-                                              BoxShadow(
-                                                color: Colors.black.withAlpha(12),
-                                                blurRadius: 4,
-                                                offset: const Offset(0, 2),
-                                              )
-                                            ]
-                                          : null,
+                                      border: _isSignUp ? Border.all(color: AppColors.border, width: 1) : null,
                                     ),
                                     child: Center(
                                       child: Text(
@@ -272,7 +257,7 @@ class _AuthPageState extends State<AuthPage> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.w600,
                                           color: _isSignUp
-                                              ? AppColors.primaryDark
+                                              ? AppColors.primary
                                               : AppColors.textSecondary,
                                         ),
                                       ),
@@ -401,18 +386,18 @@ class _AuthPageState extends State<AuthPage> {
                         // Divider
                         Row(
                           children: [
-                            Expanded(child: Divider(color: Colors.grey.shade300)),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                            Expanded(child: Divider(color: AppColors.border)),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
                               child: Text(
                                 'or',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Colors.grey.shade500,
+                                  color: AppColors.microLabel,
                                 ),
                               ),
                             ),
-                            Expanded(child: Divider(color: Colors.grey.shade300)),
+                            Expanded(child: Divider(color: AppColors.border)),
                           ],
                         ),
                         const SizedBox(height: 20),
@@ -426,7 +411,8 @@ class _AuthPageState extends State<AuthPage> {
                                 : () => widget.controller.signInAnonymously(),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.textPrimary,
-                              side: BorderSide(color: Colors.grey.shade300),
+                              backgroundColor: AppColors.surface,
+                              side: const BorderSide(color: AppColors.border, width: 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),

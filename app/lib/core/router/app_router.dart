@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/connections/presentation/pages/connections_page.dart';
+import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/followups/presentation/pages/followups_page.dart';
 import '../../features/goals/presentation/pages/goals_page.dart';
 import '../../features/groups/presentation/pages/groups_page.dart';
@@ -17,6 +19,14 @@ import 'route_paths.dart';
 class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case RoutePaths.dashboard:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => DashboardPage(
+            authController: args?['authController'] ?? AuthController(),
+            displayName: args?['displayName'],
+          ),
+        );
       case RoutePaths.users:
         return MaterialPageRoute(builder: (_) => const UsersPage());
       case RoutePaths.relationships:
