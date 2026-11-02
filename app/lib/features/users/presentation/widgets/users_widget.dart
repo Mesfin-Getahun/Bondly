@@ -65,7 +65,11 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -84,10 +88,14 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                 children: [
                   const Text(
                     'Edit Profile',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: AppColors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -97,10 +105,23 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
               // Display Name
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'Display Name *',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Sarah Jenkins',
-                  prefixIcon: Icon(Icons.person_outline_rounded),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Name cannot be empty' : null,
               ),
@@ -110,10 +131,23 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
               TextFormField(
                 controller: _bioController,
                 maxLines: 3,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'About / Bio',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Product Designer & avid traveler. Passionate about mindful friendships.',
-                  prefixIcon: Icon(Icons.notes_rounded),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.notes_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -122,10 +156,23 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'Phone Number (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: '+1 555-019-2834',
-                  prefixIcon: Icon(Icons.phone_outlined),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -136,7 +183,7 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
                 child: _isSaving
                     ? const SizedBox(

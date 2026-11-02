@@ -56,20 +56,20 @@ class ProjectCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withAlpha(25),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -84,8 +84,9 @@ class ProjectCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: catColor.withAlpha(20),
+                          color: catColor.withAlpha(25),
                           borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: catColor.withAlpha(80), width: 1),
                         ),
                         child: Text(
                           project.category,
@@ -100,8 +101,9 @@ class ProjectCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: statusColor.withAlpha(20),
+                          color: statusColor.withAlpha(25),
                           borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: statusColor.withAlpha(80), width: 1),
                         ),
                         child: Text(
                           project.status.toUpperCase(),
@@ -115,18 +117,19 @@ class ProjectCard extends StatelessWidget {
                     ],
                   ),
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+                    icon: const Icon(Icons.more_vert_rounded, color: AppColors.textTertiary),
+                    color: AppColors.surfaceElevated,
                     onSelected: (val) {
                       if (val == 'edit') onEdit();
                       if (val == 'delete') onDelete();
                       if (val == 'details') onTap();
                     },
-                    itemBuilder: (ctx) => const [
-                      PopupMenuItem(value: 'details', child: Text('Tasks & Milestones')),
-                      PopupMenuItem(value: 'edit', child: Text('Edit Project')),
-                      PopupMenuItem(
+                    itemBuilder: (ctx) => [
+                      const PopupMenuItem(value: 'details', child: Text('Tasks & Milestones', style: TextStyle(color: AppColors.textPrimary))),
+                      const PopupMenuItem(value: 'edit', child: Text('Edit Project', style: TextStyle(color: AppColors.textPrimary))),
+                      const PopupMenuItem(
                         value: 'delete',
-                        child: Text('Delete Project', style: TextStyle(color: Colors.redAccent)),
+                        child: Text('Delete Project', style: TextStyle(color: AppColors.error)),
                       ),
                     ],
                   ),
@@ -148,7 +151,7 @@ class ProjectCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   project.description!,
-                  style: TextStyle(fontSize: 12.5, color: Colors.grey.shade600),
+                  style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary, height: 1.35),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -165,7 +168,7 @@ class ProjectCard extends StatelessWidget {
                     children: [
                       Text(
                         '${project.completedTasksCount} of ${project.totalTasksCount} tasks done',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                       ),
                       Text(
                         '${(progress * 100).toInt()}%',
@@ -179,7 +182,7 @@ class ProjectCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: Colors.grey.shade100,
+                      backgroundColor: AppColors.surfaceElevated,
                       valueColor: AlwaysStoppedAnimation<Color>(catColor),
                     ),
                   ),
@@ -187,7 +190,7 @@ class ProjectCard extends StatelessWidget {
               ),
 
               const SizedBox(height: 12),
-              const Divider(height: 1),
+              const Divider(height: 1, color: AppColors.border),
               const SizedBox(height: 10),
 
               // Footer: Collaborators & Target Date
@@ -207,11 +210,11 @@ class ProjectCard extends StatelessWidget {
                   if (project.dueDate != null)
                     Row(
                       children: [
-                        const Icon(Icons.calendar_month_outlined, size: 14, color: Colors.grey),
+                        const Icon(Icons.calendar_month_outlined, size: 14, color: AppColors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
                           'Due ${AppDateUtils.formatShortDate(project.dueDate!)}',
-                          style: const TextStyle(fontSize: 11.5, color: Colors.grey),
+                          style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -317,7 +320,11 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
   Widget build(BuildContext context) {
     final isEditing = widget.existing != null;
 
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -336,10 +343,14 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
                 children: [
                   Text(
                     isEditing ? 'Edit Project' : 'New Initiative / Project',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: AppColors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -349,17 +360,30 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
               // Title
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'Project Title *',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Summer Road Trip, Book Launch, Housewarming...',
-                  prefixIcon: Icon(Icons.rocket_launch_rounded),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.rocket_launch_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a title' : null,
               ),
               const SizedBox(height: 14),
 
               // Category selector
-              const Text('Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+              const Text('Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textSecondary)),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -369,8 +393,10 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
                     label: Text(c),
                     selected: isSelected,
                     selectedColor: AppColors.primary,
+                    backgroundColor: AppColors.surfaceElevated,
+                    side: BorderSide(color: isSelected ? AppColors.primary : AppColors.border, width: 1),
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      color: isSelected ? Colors.white : AppColors.textSecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -385,9 +411,22 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
               // Status Dropdown
               DropdownButtonFormField<String>(
                 initialValue: _status,
-                decoration: const InputDecoration(
+                dropdownColor: AppColors.surfaceElevated,
+                style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 13),
+                decoration: InputDecoration(
                   labelText: 'Project Status',
-                  prefixIcon: Icon(Icons.donut_large_rounded),
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.donut_large_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
                 items: _statuses
                     .map((s) => DropdownMenuItem(value: s, child: Text(s.toUpperCase())))
@@ -405,9 +444,9 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                    color: AppColors.surfaceElevated,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
+                    border: Border.all(color: AppColors.border, width: 1),
                   ),
                   child: Row(
                     children: [
@@ -421,17 +460,17 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: _dueDate != null ? AppColors.textPrimary : Colors.grey.shade600,
+                            color: _dueDate != null ? AppColors.textPrimary : AppColors.textSecondary,
                           ),
                         ),
                       ),
                       if (_dueDate != null)
                         IconButton(
-                          icon: const Icon(Icons.clear, size: 18),
+                          icon: const Icon(Icons.clear, size: 18, color: AppColors.textSecondary),
                           onPressed: () => setState(() => _dueDate = null),
                         )
                       else
-                        const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                        const Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary),
                     ],
                   ),
                 ),
@@ -442,10 +481,23 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
               TextFormField(
                 controller: _descController,
                 maxLines: 2,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'Description / Goals (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Key objectives and notes for collaborators...',
-                  prefixIcon: Icon(Icons.notes_rounded),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.notes_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -456,7 +508,7 @@ class _CreateEditProjectSheetState extends State<CreateEditProjectSheet> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
                 child: Text(
                   isEditing ? 'Save Changes' : 'Create Project',
@@ -522,23 +574,35 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: const Text('Add Milestone'),
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: AppColors.border, width: 1),
+          ),
+          title: const Text('Add Milestone', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: titleCtrl,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Milestone Title',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Phase 1 Complete, Bookings Finalized...',
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.background,
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.border)),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.primary)),
                 ),
               ),
               const SizedBox(height: 14),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.calendar_month, color: AppColors.primary),
-                title: Text('Target: ${AppDateUtils.formatShortDate(pickedDate)}'),
-                trailing: const Icon(Icons.edit_calendar_rounded),
+                title: Text('Target: ${AppDateUtils.formatShortDate(pickedDate)}', style: const TextStyle(color: AppColors.textPrimary)),
+                trailing: const Icon(Icons.edit_calendar_rounded, color: AppColors.textSecondary),
                 onTap: () async {
                   final d = await showDatePicker(
                     context: context,
@@ -554,8 +618,16 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+            ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
               onPressed: () async {
                 if (titleCtrl.text.trim().isEmpty) return;
                 await widget.controller.addNewMilestone(
@@ -565,7 +637,7 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                 );
                 if (ctx.mounted) Navigator.pop(ctx);
               },
-              child: const Text('Add'),
+              child: const Text('Add Milestone'),
             ),
           ],
         ),
@@ -578,6 +650,10 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
       padding: const EdgeInsets.only(top: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       child: Column(
         children: [
           Padding(
@@ -591,17 +667,22 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                     children: [
                       Text(
                         widget.project.title,
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         '${widget.project.completedTasksCount} of ${widget.project.totalTasksCount} tasks completed',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(Icons.close, color: AppColors.textSecondary),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -610,8 +691,9 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
           TabBar(
             controller: _tabController,
             labelColor: AppColors.primary,
-            unselectedLabelColor: Colors.grey,
+            unselectedLabelColor: AppColors.textSecondary,
             indicatorColor: AppColors.primary,
+            dividerColor: AppColors.border,
             tabs: const [
               Tab(text: 'Tasks', icon: Icon(Icons.checklist_rounded)),
               Tab(text: 'Milestones', icon: Icon(Icons.flag_circle_outlined)),
@@ -632,16 +714,30 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                           Expanded(
                             child: TextField(
                               controller: _taskTitleController,
-                              decoration: const InputDecoration(
+                              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                              decoration: InputDecoration(
                                 hintText: 'Add a new task...',
-                                prefixIcon: Icon(Icons.add_task_rounded),
+                                hintStyle: const TextStyle(color: AppColors.textTertiary, fontSize: 13),
+                                filled: true,
+                                fillColor: AppColors.surfaceElevated,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: AppColors.border, width: 1),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                                ),
+                                prefixIcon: const Icon(Icons.add_task_rounded, color: AppColors.textSecondary),
                               ),
                               onSubmitted: (_) => _addTask(),
                             ),
                           ),
                           const SizedBox(width: 8),
                           IconButton.filled(
-                            icon: const Icon(Icons.arrow_upward_rounded),
+                            style: IconButton.styleFrom(backgroundColor: AppColors.primary),
+                            icon: const Icon(Icons.arrow_upward_rounded, color: Colors.white),
                             onPressed: _addTask,
                           ),
                         ],
@@ -651,7 +747,7 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                       Expanded(
                         child: widget.project.tasks.isEmpty
                             ? const Center(
-                                child: Text('No tasks yet. Type a task title above to add one!'),
+                                child: Text('No tasks yet. Type a task title above to add one!', style: TextStyle(color: AppColors.textSecondary)),
                               )
                             : ListView.builder(
                                 itemCount: widget.project.tasks.length,
@@ -660,6 +756,7 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                                   return ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     leading: Checkbox(
+                                      activeColor: AppColors.primary,
                                       value: t.isCompleted,
                                       onChanged: (val) => widget.controller.toggleTask(
                                         widget.project.id,
@@ -671,11 +768,11 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                                       t.title,
                                       style: TextStyle(
                                         decoration: t.isCompleted ? TextDecoration.lineThrough : null,
-                                        color: t.isCompleted ? Colors.grey : AppColors.textPrimary,
+                                        color: t.isCompleted ? AppColors.textTertiary : AppColors.textPrimary,
                                       ),
                                     ),
                                     trailing: IconButton(
-                                      icon: const Icon(Icons.delete_outline, size: 18, color: Colors.grey),
+                                      icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.textTertiary),
                                       onPressed: () => widget.controller.removeTask(
                                         widget.project.id,
                                         t.id,
@@ -696,14 +793,19 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                     children: [
                       OutlinedButton.icon(
                         onPressed: _addMilestoneDialog,
-                        icon: const Icon(Icons.add_rounded),
-                        label: const Text('Add Timeline Milestone'),
+                        icon: const Icon(Icons.add_rounded, color: AppColors.primary),
+                        label: const Text('Add Timeline Milestone', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: AppColors.surfaceElevated,
+                          side: const BorderSide(color: AppColors.border, width: 1),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Expanded(
                         child: widget.project.milestones.isEmpty
                             ? const Center(
-                                child: Text('No milestones set yet.'),
+                                child: Text('No milestones set yet.', style: TextStyle(color: AppColors.textSecondary)),
                               )
                             : ListView.builder(
                                 itemCount: widget.project.milestones.length,
@@ -716,7 +818,7 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                                         m.isReached
                                             ? Icons.check_circle_rounded
                                             : Icons.radio_button_unchecked_rounded,
-                                        color: m.isReached ? Colors.green : Colors.grey,
+                                        color: m.isReached ? Colors.greenAccent : AppColors.textTertiary,
                                       ),
                                       onPressed: () => widget.controller.toggleMilestone(
                                         widget.project.id,
@@ -728,12 +830,13 @@ class _ProjectDetailSheetState extends State<ProjectDetailSheet> with SingleTick
                                       m.title,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
                                         decoration: m.isReached ? TextDecoration.lineThrough : null,
                                       ),
                                     ),
                                     subtitle: Text(
                                       'Target: ${AppDateUtils.formatShortDate(m.targetDate)}',
-                                      style: const TextStyle(fontSize: 11),
+                                      style: const TextStyle(fontSize: 11, color: AppColors.textTertiary),
                                     ),
                                   );
                                 },

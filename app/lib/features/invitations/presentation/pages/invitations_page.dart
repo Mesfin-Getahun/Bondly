@@ -59,8 +59,9 @@ class _InvitationsPageState extends State<InvitationsPage> with SingleTickerProv
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => CreateInvitationSheet(
         controller: _controller,
@@ -75,8 +76,9 @@ class _InvitationsPageState extends State<InvitationsPage> with SingleTickerProv
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => RedeemInvitationSheet(
         controller: _controller,
@@ -91,31 +93,52 @@ class _InvitationsPageState extends State<InvitationsPage> with SingleTickerProv
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Invitations', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        title: const Text(
+          'Invitations',
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+        ),
         actions: [
-          TextButton.icon(
-            onPressed: _showRedeemSheet,
-            icon: const Icon(Icons.qr_code_scanner_rounded, size: 18),
-            label: const Text('Redeem Code'),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: TextButton.icon(
+              onPressed: _showRedeemSheet,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                backgroundColor: AppColors.primary.withAlpha(25),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.qr_code_scanner_rounded, size: 18),
+              label: const Text('Redeem Code', style: TextStyle(fontWeight: FontWeight.w600)),
+            ),
           ),
-          const SizedBox(width: 8),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: AppColors.primary,
-          tabs: const [
-            Tab(icon: Icon(Icons.vpn_key_outlined), text: 'Active Codes'),
-            Tab(icon: Icon(Icons.history_rounded), text: 'History & Claimed'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(49),
+          child: Container(
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: AppColors.border, width: 1)),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: AppColors.primary,
+              unselectedLabelColor: AppColors.textSecondary,
+              indicatorColor: AppColors.primary,
+              indicatorWeight: 3,
+              tabs: const [
+                Tab(icon: Icon(Icons.vpn_key_outlined, size: 20), text: 'Active Codes'),
+                Tab(icon: Icon(Icons.history_rounded, size: 20), text: 'History & Claimed'),
+              ],
+            ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_link_rounded),
-        label: const Text('New Invite'),
+        label: const Text('New Invite', style: TextStyle(fontWeight: FontWeight.bold)),
         onPressed: _showCreateSheet,
       ),
       body: ListenableBuilder(
@@ -133,17 +156,14 @@ class _InvitationsPageState extends State<InvitationsPage> with SingleTickerProv
               // Metric Summary Header
               Container(
                 margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.primaryDark],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border, width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withAlpha(50),
+                      color: Colors.black.withAlpha(25),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -152,11 +172,11 @@ class _InvitationsPageState extends State<InvitationsPage> with SingleTickerProv
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _MetricItem(label: 'Total Generated', count: _controller.totalCount),
-                    Container(height: 30, width: 1, color: Colors.white24),
-                    _MetricItem(label: 'Active Codes', count: _controller.activeCount),
-                    Container(height: 30, width: 1, color: Colors.white24),
-                    _MetricItem(label: 'Redeemed', count: _controller.claimedCount),
+                    _MetricItem(label: 'Total Generated', count: _controller.totalCount, color: AppColors.textPrimary),
+                    Container(height: 32, width: 1, color: AppColors.border),
+                    _MetricItem(label: 'Active Codes', count: _controller.activeCount, color: AppColors.primary),
+                    Container(height: 32, width: 1, color: AppColors.border),
+                    _MetricItem(label: 'Redeemed', count: _controller.claimedCount, color: Colors.greenAccent),
                   ],
                 ),
               ),
@@ -195,8 +215,13 @@ class _InvitationsPageState extends State<InvitationsPage> with SingleTickerProv
 class _MetricItem extends StatelessWidget {
   final String label;
   final int count;
+  final Color color;
 
-  const _MetricItem({required this.label, required this.count});
+  const _MetricItem({
+    required this.label,
+    required this.count,
+    this.color = AppColors.textPrimary,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -204,16 +229,16 @@ class _MetricItem extends StatelessWidget {
       children: [
         Text(
           '$count',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
+          style: TextStyle(
+            color: color,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 11),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -242,12 +267,12 @@ class _InvitationList extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(emptyIcon, size: 56, color: Colors.grey.shade400),
+              Icon(emptyIcon, size: 56, color: AppColors.microLabel),
               const SizedBox(height: 16),
               Text(
                 emptyMessage,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.4),
+                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
               ),
             ],
           ),

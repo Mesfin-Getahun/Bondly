@@ -57,8 +57,9 @@ class _ReportsPageState extends State<ReportsPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => SubmitReportSheet(
         controller: _controller,
@@ -73,13 +74,19 @@ class _ReportsPageState extends State<ReportsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Safety & Reports', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        shape: const Border(bottom: BorderSide(color: AppColors.border, width: 1)),
+        title: const Text(
+          'Safety & Reports',
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.error,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.report_problem_outlined),
-        label: const Text('File Report'),
+        label: const Text('File Report', style: TextStyle(fontWeight: FontWeight.bold)),
         onPressed: _showSubmitReportSheet,
       ),
       body: ListenableBuilder(
@@ -98,16 +105,16 @@ class _ReportsPageState extends State<ReportsPage> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: AppColors.privacySurface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.privacyBorder, width: 1),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 24,
-                      backgroundColor: Colors.blue.shade50,
-                      child: Icon(Icons.verified_user_outlined, color: Colors.blue.shade700, size: 24),
+                      backgroundColor: AppColors.privacyAccent.withAlpha(35),
+                      child: const Icon(Icons.shield_outlined, color: AppColors.privacyAccent, size: 24),
                     ),
                     const SizedBox(width: 14),
                     const Expanded(
@@ -116,12 +123,12 @@ class _ReportsPageState extends State<ReportsPage> {
                         children: [
                           Text(
                             'Bondly Safety & Moderation',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textPrimary),
                           ),
                           SizedBox(height: 2),
                           Text(
                             'Reports are strictly confidential and reviewed by moderators to protect user safety.',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                           ),
                         ],
                       ),
@@ -138,18 +145,18 @@ class _ReportsPageState extends State<ReportsPage> {
               const SizedBox(height: 10),
 
               if (reports.isEmpty)
-                Center(
+                const Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(32),
+                    padding: EdgeInsets.all(32),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.check_circle_outline_rounded, size: 56, color: Colors.green.shade300),
-                        const SizedBox(height: 14),
-                        const Text(
+                        Icon(Icons.check_circle_outline_rounded, size: 56, color: Colors.greenAccent),
+                        SizedBox(height: 14),
+                        Text(
                           'No reports filed.\nThank you for helping keep our community friendly and safe!',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 13, color: Colors.grey, height: 1.4),
+                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
                         ),
                       ],
                     ),

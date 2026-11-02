@@ -114,7 +114,20 @@ class _ProjectsPageState extends State<ProjectsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Projects & Initiatives', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        titleTextStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: AppColors.border),
+        ),
+        title: const Text('Projects & Initiatives'),
         actions: [
           IconButton(
             tooltip: 'New Project',
@@ -127,7 +140,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.rocket_launch_rounded),
-        label: const Text('New Project'),
+        label: const Text('New Project', style: TextStyle(fontWeight: FontWeight.bold)),
         onPressed: () => _showCreateEditSheet(),
       ),
       body: ListenableBuilder(
@@ -146,17 +159,14 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.primaryDark],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border, width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withAlpha(50),
+                      color: Colors.black.withAlpha(25),
                       blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -164,9 +174,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _MetricItem(label: 'Total Projects', count: _controller.totalProjects),
-                    Container(height: 30, width: 1, color: Colors.white24),
+                    Container(height: 30, width: 1, color: AppColors.border),
                     _MetricItem(label: 'Active', count: _controller.activeProjects),
-                    Container(height: 30, width: 1, color: Colors.white24),
+                    Container(height: 30, width: 1, color: AppColors.border),
                     _MetricItem(label: 'Completed', count: _controller.completedProjects),
                   ],
                 ),
@@ -177,13 +187,26 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 child: TextField(
                   controller: _searchController,
+                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                   onChanged: _controller.setSearchQuery,
                   decoration: InputDecoration(
                     hintText: 'Search projects by title or topic...',
+                    hintStyle: const TextStyle(color: AppColors.textTertiary, fontSize: 13),
+                    filled: true,
+                    fillColor: AppColors.surface,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppColors.border, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                    ),
                     prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear_rounded),
+                            icon: const Icon(Icons.clear_rounded, color: AppColors.textSecondary),
                             onPressed: () {
                               _searchController.clear();
                               _controller.setSearchQuery('');
@@ -211,8 +234,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
                         label: Text(s),
                         selected: isSelected,
                         selectedColor: AppColors.primary,
+                        backgroundColor: AppColors.surface,
+                        side: BorderSide(
+                          color: isSelected ? AppColors.primary : AppColors.border,
+                          width: 1,
+                        ),
                         labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : AppColors.textPrimary,
+                          color: isSelected ? Colors.white : AppColors.textSecondary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -235,14 +263,22 @@ class _ProjectsPageState extends State<ProjectsPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.rocket_launch_outlined, size: 60, color: Colors.grey.shade400),
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surface,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: AppColors.border, width: 1),
+                                ),
+                                child: const Icon(Icons.rocket_launch_outlined, size: 48, color: AppColors.textTertiary),
+                              ),
                               const SizedBox(height: 16),
                               Text(
                                 _controller.searchQuery.isNotEmpty
                                     ? 'No projects matching "${_controller.searchQuery}"'
                                     : 'No initiatives yet.\nStart a project to plan trips, events, or shared ideas together!',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.4),
+                                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
                               ),
                             ],
                           ),
@@ -283,7 +319,7 @@ class _MetricItem extends StatelessWidget {
         Text(
           '$count',
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -291,7 +327,7 @@ class _MetricItem extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 11),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
         ),
       ],
     );

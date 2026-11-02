@@ -16,6 +16,7 @@ class AppColors {
   // Primary Accent / Brand: #FF6B50 (Warm coral/terracotta for greeting banners and primary actions)
   static const Color primary = Color(0xFFFF6B50);
   static const Color primaryDark = Color(0xFFE05338);
+  static const Color primaryMuted = Color(0x33FF6B50);
   static const Color secondary = Color(0xFF263238);
 
   // Privacy Accent: #8B5CF6 (Muted violet for privacy notes and owner-only indicators)
@@ -30,6 +31,7 @@ class AppColors {
   static const Color textSecondary = Color(0xFF94A3B8);
   // Micro-labels: #64748B
   static const Color microLabel = Color(0xFF64748B);
+  static const Color textTertiary = Color(0xFF64748B);
 
   // Status Colors
   static const Color error = Color(0xFFEF4444);

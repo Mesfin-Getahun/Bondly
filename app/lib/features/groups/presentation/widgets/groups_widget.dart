@@ -64,20 +64,20 @@ class GroupCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withAlpha(25),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -109,10 +109,11 @@ class GroupCard extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: catColor.withAlpha(20),
+                                color: catColor.withAlpha(25),
                                 borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: catColor.withAlpha(80), width: 1),
                               ),
                               child: Text(
                                 group.category,
@@ -128,15 +129,16 @@ class GroupCard extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
+                                  color: AppColors.surfaceElevated,
                                   borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: AppColors.border, width: 1),
                                 ),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.lock_outline_rounded, size: 10, color: Colors.grey),
-                                    SizedBox(width: 2),
-                                    Text('Private', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                                    Icon(Icons.lock_outline_rounded, size: 10, color: AppColors.textSecondary),
+                                    SizedBox(width: 3),
+                                    Text('Private', style: TextStyle(fontSize: 10, color: AppColors.textSecondary)),
                                   ],
                                 ),
                               ),
@@ -147,7 +149,8 @@ class GroupCard extends StatelessWidget {
                     ),
                   ),
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+                    icon: const Icon(Icons.more_vert_rounded, color: AppColors.textTertiary),
+                    color: AppColors.surfaceElevated,
                     onSelected: (val) {
                       switch (val) {
                         case 'members':
@@ -167,9 +170,9 @@ class GroupCard extends StatelessWidget {
                         value: 'members',
                         child: Row(
                           children: [
-                            Icon(Icons.people_outline_rounded, size: 18),
+                            Icon(Icons.people_outline_rounded, size: 18, color: AppColors.textPrimary),
                             SizedBox(width: 8),
-                            Text('Members & Roles'),
+                            Text('Members & Roles', style: TextStyle(color: AppColors.textPrimary)),
                           ],
                         ),
                       ),
@@ -178,9 +181,9 @@ class GroupCard extends StatelessWidget {
                           value: 'edit',
                           child: Row(
                             children: [
-                              Icon(Icons.edit_outlined, size: 18),
+                              Icon(Icons.edit_outlined, size: 18, color: AppColors.textPrimary),
                               SizedBox(width: 8),
-                              Text('Edit Circle'),
+                              Text('Edit Circle', style: TextStyle(color: AppColors.textPrimary)),
                             ],
                           ),
                         ),
@@ -191,12 +194,12 @@ class GroupCard extends StatelessWidget {
                             Icon(
                               isOwner ? Icons.delete_outline_rounded : Icons.exit_to_app_rounded,
                               size: 18,
-                              color: Colors.redAccent,
+                              color: AppColors.error,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               isOwner ? 'Delete Circle' : 'Leave Circle',
-                              style: const TextStyle(color: Colors.redAccent),
+                              style: const TextStyle(color: AppColors.error),
                             ),
                           ],
                         ),
@@ -210,14 +213,14 @@ class GroupCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   group.description!,
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600, height: 1.3),
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.35),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
 
               const SizedBox(height: 14),
-              const Divider(height: 1),
+              const Divider(height: 1, color: AppColors.border),
               const SizedBox(height: 10),
 
               // Bottom Info: Members Count + User Role
@@ -239,13 +242,14 @@ class GroupCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: isOwner
-                            ? Colors.amber.shade50
-                            : (role == GroupRole.admin ? Colors.blue.shade50 : Colors.grey.shade100),
+                            ? AppColors.primary.withAlpha(25)
+                            : (role == GroupRole.admin ? AppColors.privacyAccent.withAlpha(25) : AppColors.surfaceElevated),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                           color: isOwner
-                              ? Colors.amber.shade300
-                              : (role == GroupRole.admin ? Colors.blue.shade200 : Colors.grey.shade300),
+                              ? AppColors.primary.withAlpha(80)
+                              : (role == GroupRole.admin ? AppColors.privacyAccent.withAlpha(80) : AppColors.border),
+                          width: 1,
                         ),
                       ),
                       child: Text(
@@ -254,8 +258,8 @@ class GroupCard extends StatelessWidget {
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: isOwner
-                              ? Colors.amber.shade900
-                              : (role == GroupRole.admin ? Colors.blue.shade800 : Colors.grey.shade700),
+                              ? AppColors.primary
+                              : (role == GroupRole.admin ? AppColors.privacyAccent : AppColors.textSecondary),
                         ),
                       ),
                     ),
@@ -345,7 +349,11 @@ class _CreateEditGroupSheetState extends State<CreateEditGroupSheet> {
   Widget build(BuildContext context) {
     final isEditing = widget.existing != null;
 
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -364,10 +372,14 @@ class _CreateEditGroupSheetState extends State<CreateEditGroupSheet> {
                 children: [
                   Text(
                     isEditing ? 'Edit Circle' : 'Create New Circle',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: AppColors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -377,17 +389,30 @@ class _CreateEditGroupSheetState extends State<CreateEditGroupSheet> {
               // Circle Name
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'Circle Name *',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'e.g. Hiking Enthusiasts, Family Core...',
-                  prefixIcon: Icon(Icons.group_work_rounded),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.group_work_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a circle name' : null,
               ),
               const SizedBox(height: 14),
 
               // Category selector
-              const Text('Circle Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+              const Text('Circle Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textSecondary)),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -397,8 +422,10 @@ class _CreateEditGroupSheetState extends State<CreateEditGroupSheet> {
                     label: Text(c),
                     selected: isSelected,
                     selectedColor: AppColors.primary,
+                    backgroundColor: AppColors.surfaceElevated,
+                    side: BorderSide(color: isSelected ? AppColors.primary : AppColors.border, width: 1),
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      color: isSelected ? Colors.white : AppColors.textSecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -414,10 +441,23 @@ class _CreateEditGroupSheetState extends State<CreateEditGroupSheet> {
               TextFormField(
                 controller: _descController,
                 maxLines: 2,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'Description / Purpose (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Plan weekend trips and share memories together.',
-                  prefixIcon: Icon(Icons.notes_rounded),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.notes_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -425,8 +465,9 @@ class _CreateEditGroupSheetState extends State<CreateEditGroupSheet> {
               // Private switch
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Private Circle', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                subtitle: const Text('Only Admins can invite new members', style: TextStyle(fontSize: 12)),
+                activeColor: AppColors.primary,
+                title: const Text('Private Circle', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+                subtitle: const Text('Only Admins can invite new members', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                 value: _isPrivate,
                 onChanged: (v) => setState(() => _isPrivate = v),
               ),
@@ -438,7 +479,7 @@ class _CreateEditGroupSheetState extends State<CreateEditGroupSheet> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
                 child: Text(
                   isEditing ? 'Save Changes' : 'Create Circle',
@@ -478,30 +519,57 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Add Member to Circle'),
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppColors.border, width: 1),
+        ),
+        title: const Text('Add Member to Circle', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameCtrl,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
                 labelText: 'Member Name *',
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 hintText: 'Sarah Jenkins',
+                hintStyle: const TextStyle(color: AppColors.textTertiary),
+                filled: true,
+                fillColor: AppColors.background,
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.border)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.primary)),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             TextField(
               controller: idCtrl,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
                 labelText: 'User ID or Email',
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 hintText: 'e.g. user_123 or sarah@example.com',
+                hintStyle: const TextStyle(color: AppColors.textTertiary),
+                filled: true,
+                fillColor: AppColors.background,
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.border)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.primary)),
               ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+          ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
             onPressed: () async {
               if (nameCtrl.text.trim().isEmpty) return;
               final uid = idCtrl.text.trim().isNotEmpty
@@ -519,7 +587,7 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
               );
               if (ctx.mounted) Navigator.pop(ctx);
             },
-            child: const Text('Add'),
+            child: const Text('Add Member'),
           ),
         ],
       ),
@@ -532,7 +600,11 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
     final isAdmin = widget.group.isAdmin(widget.currentUserId);
     final canManage = isOwner || isAdmin;
 
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -551,32 +623,40 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                 children: [
                   Text(
                     widget.group.name,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     '${widget.group.members.length} Members',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                   ),
                 ],
               ),
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: const Icon(Icons.close, color: AppColors.textSecondary),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
           if (canManage) ...[
             OutlinedButton.icon(
               onPressed: _showAddMemberDialog,
-              icon: const Icon(Icons.person_add_rounded),
-              label: const Text('Add Member to Circle'),
+              icon: const Icon(Icons.person_add_rounded, color: AppColors.primary),
+              label: const Text('Add Member to Circle', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
               style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                backgroundColor: AppColors.surfaceElevated,
+                side: const BorderSide(color: AppColors.border, width: 1),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
           ],
 
           ConstrainedBox(
@@ -602,24 +682,25 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                     children: [
                       Text(
                         m.displayName,
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary),
                       ),
                       if (isMe) ...[
                         const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: AppColors.surfaceElevated,
                             borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: AppColors.border, width: 1),
                           ),
-                          child: const Text('You', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                          child: const Text('You', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.primary)),
                         ),
                       ],
                     ],
                   ),
                   subtitle: Text(
                     'Joined ${AppDateUtils.timeAgo(m.joinedAt)}',
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                    style: const TextStyle(fontSize: 11, color: AppColors.textTertiary),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -628,9 +709,15 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: isMemberOwner
-                              ? Colors.amber.shade50
-                              : (m.role == GroupRole.admin ? Colors.blue.shade50 : Colors.grey.shade100),
+                              ? AppColors.primary.withAlpha(25)
+                              : (m.role == GroupRole.admin ? AppColors.privacyAccent.withAlpha(25) : AppColors.surfaceElevated),
                           borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: isMemberOwner
+                                ? AppColors.primary.withAlpha(80)
+                                : (m.role == GroupRole.admin ? AppColors.privacyAccent.withAlpha(80) : AppColors.border),
+                            width: 1,
+                          ),
                         ),
                         child: Text(
                           m.role.label,
@@ -638,15 +725,16 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: isMemberOwner
-                                ? Colors.amber.shade900
-                                : (m.role == GroupRole.admin ? Colors.blue.shade800 : Colors.grey.shade700),
+                                ? AppColors.primary
+                                : (m.role == GroupRole.admin ? AppColors.privacyAccent : AppColors.textSecondary),
                           ),
                         ),
                       ),
                       if (isOwner && !isMemberOwner) ...[
                         const SizedBox(width: 4),
                         PopupMenuButton<String>(
-                          icon: const Icon(Icons.more_vert, size: 18),
+                          icon: const Icon(Icons.more_vert, size: 18, color: AppColors.textTertiary),
+                          color: AppColors.surfaceElevated,
                           onSelected: (val) {
                             if (val == 'promote') {
                               widget.controller.changeMemberRole(
@@ -669,12 +757,12 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                           },
                           itemBuilder: (ctx) => [
                             if (m.role == GroupRole.member)
-                              const PopupMenuItem(value: 'promote', child: Text('Make Admin'))
+                              const PopupMenuItem(value: 'promote', child: Text('Make Admin', style: TextStyle(color: AppColors.textPrimary)))
                             else if (m.role == GroupRole.admin)
-                              const PopupMenuItem(value: 'demote', child: Text('Remove Admin')),
+                              const PopupMenuItem(value: 'demote', child: Text('Remove Admin', style: TextStyle(color: AppColors.textPrimary))),
                             const PopupMenuItem(
                               value: 'remove',
-                              child: Text('Remove from Circle', style: TextStyle(color: Colors.red)),
+                              child: Text('Remove from Circle', style: TextStyle(color: AppColors.error)),
                             ),
                           ],
                         ),

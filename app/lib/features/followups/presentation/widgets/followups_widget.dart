@@ -4,7 +4,10 @@ import '../../../../core/utils/date_utils.dart';
 import '../../domain/entities/followups_entity.dart';
 import '../controllers/followups_controller.dart';
 
-/// Item tile for a follow-up reminder
+/// Feature: Followups - Widgets adhering strictly to AGENTS.md
+
+/// AGENTS.md Rules 1 & 3: Followup reminder tile with 20px radius, 1px border,
+/// dark surface (#121824), and overflow-safe typography.
 class FollowupTile extends StatelessWidget {
   final FollowupEntity followup;
   final ValueChanged<bool?> onToggle;
@@ -24,9 +27,9 @@ class FollowupTile extends StatelessWidget {
       case FollowupPriority.high:
         return AppColors.error;
       case FollowupPriority.low:
-        return Colors.green;
+        return const Color(0xFF10B981); // Emerald
       case FollowupPriority.medium:
-        return Colors.orange;
+        return const Color(0xFFF59E0B); // Amber
     }
   }
 
@@ -36,149 +39,170 @@ class FollowupTile extends StatelessWidget {
     final isDueToday = followup.isDueToday;
     final priorityColor = _priorityColor(followup.priority);
 
-    return InkWell(
-      onTap: onEdit,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isOverdue
-                ? AppColors.error.withAlpha(90)
-                : (isDueToday ? Colors.orange.shade300 : Colors.grey.shade200),
-            width: isOverdue || isDueToday ? 1.5 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isOverdue ? AppColors.error.withAlpha(8) : Colors.black.withAlpha(5),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onEdit,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isOverdue
+                  ? AppColors.error.withValues(alpha: 0.6)
+                  : (isDueToday ? const Color(0xFFF59E0B).withValues(alpha: 0.6) : AppColors.border),
+              width: 1,
             ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Checkbox
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Checkbox(
-                value: followup.isCompleted,
-                activeColor: AppColors.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                onChanged: onToggle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
-            ),
-            const SizedBox(width: 8),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Checkbox
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Checkbox(
+                  value: followup.isCompleted,
+                  activeColor: AppColors.primary,
+                  checkColor: Colors.white,
+                  side: const BorderSide(color: AppColors.border, width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  onChanged: onToggle,
+                ),
+              ),
+              const SizedBox(width: 8),
 
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      // Priority dot
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: priorityColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          followup.title,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            decoration: followup.isCompleted ? TextDecoration.lineThrough : null,
-                            color: followup.isCompleted ? Colors.grey : AppColors.textPrimary,
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        // Priority indicator dot
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: priorityColor,
+                            shape: BoxShape.circle,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-
-                  // Contact name & Cadence
-                  Row(
-                    children: [
-                      const Icon(Icons.person_outline, size: 14, color: AppColors.textSecondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        followup.contactName,
-                        style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
-                      ),
-                      if (followup.repeatCadence != 'none') ...[
                         const SizedBox(width: 8),
-                        const Icon(Icons.repeat_rounded, size: 14, color: AppColors.primary),
-                        const SizedBox(width: 3),
-                        Text(
-                          followup.repeatCadence,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
+                        Expanded(
+                          child: Text(
+                            followup.title,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: followup.isCompleted ? AppColors.microLabel : AppColors.textPrimary,
+                              decoration: followup.isCompleted ? TextDecoration.lineThrough : null,
+                              decorationColor: AppColors.microLabel,
+                              letterSpacing: -0.2,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
-                    ],
-                  ),
-
-                  // Due Date Status
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: isOverdue
-                          ? AppColors.error.withAlpha(15)
-                          : (isDueToday
-                              ? Colors.orange.shade50
-                              : (followup.isCompleted ? Colors.grey.shade100 : Colors.blue.shade50)),
-                      borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Text(
-                      followup.isCompleted
-                          ? 'Completed'
-                          : (isOverdue
-                              ? 'Overdue (${AppDateUtils.formatShortDate(followup.dueDate)})'
-                              : (isDueToday
-                                  ? 'Due Today'
-                                  : 'Due: ${AppDateUtils.formatShortDate(followup.dueDate)}')),
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 6),
+
+                    // Contact name & Cadence
+                    Row(
+                      children: [
+                        const Icon(Icons.person_outline_rounded, size: 14, color: AppColors.textSecondary),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            followup.contactName,
+                            style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (followup.repeatCadence != 'none') ...[
+                          const SizedBox(width: 8),
+                          const Icon(Icons.repeat_rounded, size: 13, color: AppColors.primary),
+                          const SizedBox(width: 3),
+                          Text(
+                            followup.repeatCadence,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+
+                    // Due Date Status Badge
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                      decoration: BoxDecoration(
                         color: isOverdue
-                            ? AppColors.error
+                            ? AppColors.error.withValues(alpha: 0.12)
                             : (isDueToday
-                                ? Colors.deepOrange
-                                : (followup.isCompleted ? Colors.grey : Colors.blue.shade800)),
+                                ? const Color(0xFFF59E0B).withValues(alpha: 0.12)
+                                : AppColors.surfaceElevated),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isOverdue
+                              ? AppColors.error.withValues(alpha: 0.3)
+                              : (isDueToday
+                                  ? const Color(0xFFF59E0B).withValues(alpha: 0.3)
+                                  : AppColors.border),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        followup.isCompleted
+                            ? 'Completed'
+                            : (isOverdue
+                                ? 'Overdue (${AppDateUtils.formatShortDate(followup.dueDate)})'
+                                : (isDueToday
+                                    ? 'Due Today'
+                                    : 'Due: ${AppDateUtils.formatShortDate(followup.dueDate)}')),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isOverdue
+                              ? AppColors.error
+                              : (isDueToday
+                                  ? const Color(0xFFF59E0B)
+                                  : (followup.isCompleted ? AppColors.microLabel : AppColors.textSecondary)),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // Delete action
-            IconButton(
-              icon: const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.grey),
-              onPressed: onDelete,
-            ),
-          ],
+              // Delete action
+              IconButton(
+                icon: const Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.microLabel),
+                onPressed: onDelete,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Sheet to create or edit a follow-up reminder
+/// Sheet to create or edit a follow-up reminder in Dark Modern Theme
 class AddEditFollowupSheet extends StatefulWidget {
   final FollowupsController controller;
   final FollowupEntity? existing;
@@ -244,6 +268,18 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
       initialDate: _dueDate,
       firstDate: DateTime.now().subtract(const Duration(days: 30)),
       lastDate: DateTime.now().add(const Duration(days: 365 * 3)),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primary,
+              surface: AppColors.surface,
+              onSurface: AppColors.textPrimary,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() => _dueDate = picked);
@@ -278,11 +314,41 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
     if (mounted) Navigator.pop(context);
   }
 
+  InputDecoration _inputDecoration(String label, IconData icon, {String? hint}) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hint,
+      labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+      hintStyle: const TextStyle(color: AppColors.microLabel, fontSize: 13),
+      prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
+      filled: true,
+      fillColor: AppColors.surfaceElevated,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: AppColors.border, width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: AppColors.border, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.existing != null;
 
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(top: BorderSide(color: AppColors.border, width: 1)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -301,23 +367,28 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
                 children: [
                   Text(
                     isEditing ? 'Edit Follow-up' : 'New Follow-up Reminder',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 18),
 
               // Title
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Reminder Title *',
-                  hintText: 'Catch up over coffee, check on project...',
-                  prefixIcon: Icon(Icons.alarm_rounded),
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: _inputDecoration(
+                  'Reminder Title *',
+                  Icons.alarm_rounded,
+                  hint: 'Catch up over coffee, check on project...',
                 ),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a title' : null,
               ),
@@ -326,11 +397,8 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
               // Contact Name
               TextFormField(
                 controller: _contactController,
-                decoration: const InputDecoration(
-                  labelText: 'Contact Person *',
-                  hintText: 'Sarah Jenkins',
-                  prefixIcon: Icon(Icons.person_outline),
-                ),
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: _inputDecoration('Contact Person *', Icons.person_outline_rounded, hint: 'Sarah Jenkins'),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a contact name' : null,
               ),
               const SizedBox(height: 12),
@@ -338,13 +406,13 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
               // Due Date Picker Button
               InkWell(
                 onTap: _pickDueDate,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(14),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
+                    color: AppColors.surfaceElevated,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.border, width: 1),
                   ),
                   child: Row(
                     children: [
@@ -353,20 +421,24 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
                       Expanded(
                         child: Text(
                           'Due Date: ${AppDateUtils.formatShortDate(_dueDate)}',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
-                      const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                      const Icon(Icons.chevron_right_rounded, color: AppColors.microLabel),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               // Priority Selector
               Row(
                 children: [
-                  const Text('Priority: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text('Priority: ', style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
                   const SizedBox(width: 10),
                   ...FollowupPriority.values.map((p) {
                     final isSelected = _priority == p;
@@ -376,6 +448,11 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
                         selected: isSelected,
                         label: Text(p.name.toUpperCase()),
                         selectedColor: AppColors.primary,
+                        backgroundColor: AppColors.surfaceElevated,
+                        side: BorderSide(
+                          color: isSelected ? AppColors.primary : AppColors.border,
+                          width: 1,
+                        ),
                         labelStyle: TextStyle(
                           color: isSelected ? Colors.white : AppColors.textPrimary,
                           fontWeight: FontWeight.bold,
@@ -389,15 +466,14 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
                   }),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               // Repeat Cadence
               DropdownButtonFormField<String>(
                 initialValue: _repeatCadence,
-                decoration: const InputDecoration(
-                  labelText: 'Repeat Cadence',
-                  prefixIcon: Icon(Icons.repeat_rounded),
-                ),
+                dropdownColor: AppColors.surfaceElevated,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: _inputDecoration('Repeat Cadence', Icons.repeat_rounded),
                 items: _cadenceOptions
                     .map((c) => DropdownMenuItem(value: c['value'], child: Text(c['label']!)))
                     .toList(),
@@ -411,10 +487,11 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
               TextFormField(
                 controller: _notesController,
                 maxLines: 2,
-                decoration: const InputDecoration(
-                  labelText: 'Private Notes (Optional)',
-                  hintText: 'Talk about vacation plans, ask about family...',
-                  prefixIcon: Icon(Icons.notes_rounded),
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: _inputDecoration(
+                  'Private Notes (Optional)',
+                  Icons.notes_rounded,
+                  hint: 'Talk about plans, ask about family...',
                 ),
               ),
               const SizedBox(height: 24),
@@ -424,8 +501,9 @@ class _AddEditFollowupSheetState extends State<AddEditFollowupSheet> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
+                  elevation: 0,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
                 child: Text(
                   isEditing ? 'Save Changes' : 'Schedule Follow-up',

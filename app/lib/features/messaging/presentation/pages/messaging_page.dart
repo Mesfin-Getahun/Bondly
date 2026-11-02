@@ -6,6 +6,7 @@ import '../widgets/messaging_widget.dart';
 import 'chat_conversation_page.dart';
 
 /// Feature: Messaging - Conversations Feed Page
+/// Adheres strictly to AGENTS.md dark modern styling and layout standards.
 class MessagingPage extends StatefulWidget {
   final String? currentUserId;
   final MessagingController? controller;
@@ -67,23 +68,55 @@ class _MessagingPageState extends State<MessagingPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Start New Conversation'),
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppColors.border, width: 1),
+        ),
+        title: const Text(
+          'Start New Conversation',
+          style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: otherNameController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
                 labelText: "Contact's Name",
-                prefixIcon: Icon(Icons.person_outline),
+                labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.primary),
+                filled: true,
+                fillColor: AppColors.surfaceElevated,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.border, width: 1),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.border, width: 1),
+                ),
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: otherUserIdController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
                 labelText: 'User ID or Email',
-                prefixIcon: Icon(Icons.tag_rounded),
+                labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                prefixIcon: const Icon(Icons.tag_rounded, color: AppColors.primary),
+                filled: true,
+                fillColor: AppColors.surfaceElevated,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.border, width: 1),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.border, width: 1),
+                ),
               ),
             ),
           ],
@@ -91,28 +124,30 @@ class _MessagingPageState extends State<MessagingPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () async {
               final otherId = otherUserIdController.text.trim();
               final otherName = otherNameController.text.trim();
               if (otherId.isNotEmpty) {
                 Navigator.pop(ctx);
-                final conv = await _controller.openOrCreateChat(
+                final conv = await _controller.startConversation(
                   otherUserId: otherId,
-                  otherUserName: otherName.isNotEmpty ? otherName : 'Friend',
+                  otherUserName: otherName.isNotEmpty ? otherName : null,
                 );
                 if (conv != null && mounted) {
                   _openChat(conv);
                 }
               }
             },
-            child: const Text('Start Chat'),
+            child: const Text('Start Chat', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -121,18 +156,29 @@ class _MessagingPageState extends State<MessagingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = widget.currentUserId ?? '';
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Messages', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        title: const Text(
+          'Messages',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+        ),
         actions: [
           IconButton(
             tooltip: 'New Conversation',
-            icon: const Icon(Icons.chat_bubble_outline_rounded),
+            icon: const Icon(Icons.add_comment_rounded, color: AppColors.textPrimary),
             onPressed: _showNewChatDialog,
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: ListenableBuilder(
@@ -142,18 +188,20 @@ class _MessagingPageState extends State<MessagingPage> {
 
           return Column(
             children: [
-              // Search Bar
+              // Search Header
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: TextField(
                   controller: _searchController,
+                  style: const TextStyle(color: AppColors.textPrimary),
                   onChanged: _controller.setSearchQuery,
                   decoration: InputDecoration(
                     hintText: 'Search conversations...',
-                    prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary),
+                    hintStyle: const TextStyle(color: AppColors.microLabel, fontSize: 13),
+                    prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, size: 18),
+                            icon: const Icon(Icons.clear, size: 18, color: AppColors.textSecondary),
                             onPressed: () {
                               _searchController.clear();
                               _controller.setSearchQuery('');
@@ -161,34 +209,38 @@ class _MessagingPageState extends State<MessagingPage> {
                           )
                         : null,
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: AppColors.surface,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderSide: const BorderSide(color: AppColors.border, width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.grey.shade200),
+                      borderSide: const BorderSide(color: AppColors.border, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                     ),
                   ),
                 ),
               ),
 
-              // Conversation List or Empty State
+              // Conversation List
               Expanded(
                 child: _controller.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
                     : list.isEmpty
-                        ? _EmptyMessagingView(onNewChat: _showNewChatDialog)
+                        ? _EmptyConversationsView(onStartChat: _showNewChatDialog)
                         : ListView.builder(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             itemCount: list.length,
                             itemBuilder: (context, index) {
                               final conv = list[index];
                               return ConversationTile(
                                 conversation: conv,
-                                currentUserId: userId,
+                                currentUserId: widget.currentUserId ?? '',
                                 onTap: () => _openChat(conv),
                                 onDelete: () => _controller.deleteConversation(conv.id),
                               );
@@ -202,18 +254,19 @@ class _MessagingPageState extends State<MessagingPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        elevation: 4,
         onPressed: _showNewChatDialog,
-        tooltip: 'New Message',
-        child: const Icon(Icons.edit_outlined),
+        child: const Icon(Icons.edit_rounded),
       ),
     );
   }
 }
 
-class _EmptyMessagingView extends StatelessWidget {
-  final VoidCallback onNewChat;
+/// Empty state for messaging feed in Dark Modern Theme
+class _EmptyConversationsView extends StatelessWidget {
+  final VoidCallback onStartChat;
 
-  const _EmptyMessagingView({required this.onNewChat});
+  const _EmptyConversationsView({required this.onStartChat});
 
   @override
   Widget build(BuildContext context) {
@@ -224,16 +277,17 @@ class _EmptyMessagingView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 76,
+              height: 76,
               decoration: BoxDecoration(
-                color: AppColors.primary.withAlpha(20),
+                color: const Color(0xFF10B981).withValues(alpha: 0.12),
                 shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3), width: 1),
               ),
               child: const Icon(
                 Icons.chat_bubble_outline_rounded,
-                size: 40,
-                color: AppColors.primary,
+                size: 38,
+                color: Color(0xFF10B981),
               ),
             ),
             const SizedBox(height: 18),
@@ -243,20 +297,21 @@ class _EmptyMessagingView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Start a 1-on-1 direct conversation with friends or connections to stay in touch.',
+              'Start a direct, private 1-on-1 conversation with your friends and trusted connections.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: onNewChat,
+              onPressed: onStartChat,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
-              icon: const Icon(Icons.add_comment_rounded),
+              icon: const Icon(Icons.chat_rounded),
               label: const Text('Start First Chat', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],

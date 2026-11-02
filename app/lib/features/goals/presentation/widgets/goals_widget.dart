@@ -46,19 +46,19 @@ class GoalCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: goal.isOverdue
-              ? AppColors.error.withAlpha(80)
-              : (goal.isDueSoon ? Colors.orange.shade300 : Colors.grey.shade200),
-          width: goal.isOverdue || goal.isDueSoon ? 1.5 : 1,
+              ? AppColors.error.withAlpha(90)
+              : (goal.isDueSoon ? Colors.orangeAccent : AppColors.border),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withAlpha(25),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -87,17 +87,18 @@ class GoalCard extends StatelessWidget {
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           decoration: isDone ? TextDecoration.lineThrough : null,
-                          color: isDone ? Colors.grey : AppColors.textPrimary,
+                          color: isDone ? AppColors.textTertiary : AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: catColor.withAlpha(20),
+                              color: catColor.withAlpha(25),
                               borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: catColor.withAlpha(80), width: 1),
                             ),
                             child: Text(
                               goal.category,
@@ -113,17 +114,18 @@ class GoalCard extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
+                                color: AppColors.privacyAccent.withAlpha(25),
                                 borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: AppColors.privacyAccent.withAlpha(80), width: 1),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.people_alt_outlined, size: 12, color: Colors.blue.shade700),
+                                  const Icon(Icons.people_alt_outlined, size: 12, color: AppColors.privacyAccent),
                                   const SizedBox(width: 3),
                                   Text(
                                     'Shared (${goal.participantIds.length})',
-                                    style: TextStyle(fontSize: 10, color: Colors.blue.shade800, fontWeight: FontWeight.w600),
+                                    style: const TextStyle(fontSize: 10, color: AppColors.privacyAccent, fontWeight: FontWeight.w600),
                                   ),
                                 ],
                               ),
@@ -135,16 +137,17 @@ class GoalCard extends StatelessWidget {
                   ),
                 ),
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+                  icon: const Icon(Icons.more_vert_rounded, color: AppColors.textTertiary),
+                  color: AppColors.surfaceElevated,
                   onSelected: (val) {
                     if (val == 'edit') onEdit();
                     if (val == 'delete') onDelete();
                   },
-                  itemBuilder: (ctx) => const [
-                    PopupMenuItem(value: 'edit', child: Text('Edit Goal')),
-                    PopupMenuItem(
+                  itemBuilder: (ctx) => [
+                    const PopupMenuItem(value: 'edit', child: Text('Edit Goal', style: TextStyle(color: AppColors.textPrimary))),
+                    const PopupMenuItem(
                       value: 'delete',
-                      child: Text('Delete Goal', style: TextStyle(color: Colors.redAccent)),
+                      child: Text('Delete Goal', style: TextStyle(color: AppColors.error)),
                     ),
                   ],
                 ),
@@ -157,7 +160,7 @@ class GoalCard extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 44),
                 child: Text(
                   goal.description!,
-                  style: TextStyle(fontSize: 12.5, color: Colors.grey.shade600),
+                  style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary, height: 1.35),
                 ),
               ),
             ],
@@ -175,7 +178,7 @@ class GoalCard extends StatelessWidget {
                     children: [
                       Text(
                         '${goal.currentCount} / ${goal.targetCount} ${goal.unit}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
                       ),
                       Text(
                         '${(percent * 100).toInt()}%',
@@ -189,9 +192,9 @@ class GoalCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: percent,
                       minHeight: 8,
-                      backgroundColor: Colors.grey.shade100,
+                      backgroundColor: AppColors.surfaceElevated,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isDone ? Colors.green : catColor,
+                        isDone ? Colors.greenAccent : catColor,
                       ),
                     ),
                   ),
@@ -200,7 +203,7 @@ class GoalCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
-            const Divider(height: 1),
+            const Divider(height: 1, color: AppColors.border),
             const SizedBox(height: 8),
 
             // Footer: Deadline & Quick +1 Increment
@@ -215,7 +218,7 @@ class GoalCard extends StatelessWidget {
                         size: 14,
                         color: goal.isOverdue
                             ? AppColors.error
-                            : (goal.isDueSoon ? Colors.orange : Colors.grey),
+                            : (goal.isDueSoon ? Colors.orangeAccent : AppColors.textSecondary),
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -229,13 +232,13 @@ class GoalCard extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           color: goal.isOverdue
                               ? AppColors.error
-                              : (goal.isDueSoon ? Colors.orange.shade800 : Colors.grey.shade600),
+                              : (goal.isDueSoon ? Colors.orangeAccent : AppColors.textSecondary),
                         ),
                       ),
                     ],
                   ),
                 ] else
-                  const Text('No deadline', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  const Text('No deadline', style: TextStyle(fontSize: 11, color: AppColors.textTertiary)),
 
                 // +1 Quick Log Button
                 if (!isDone)
@@ -365,7 +368,11 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
   Widget build(BuildContext context) {
     final isEditing = widget.existing != null;
 
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -384,10 +391,14 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
                 children: [
                   Text(
                     isEditing ? 'Edit Goal' : 'New Relationship Goal',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: AppColors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -397,17 +408,30 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
               // Title
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'Goal Title *',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Call Mom weekly, Coffee with 3 friends...',
-                  prefixIcon: Icon(Icons.flag_rounded),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.flag_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a goal title' : null,
               ),
               const SizedBox(height: 12),
 
               // Category Choice Chips
-              const Text('Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+              const Text('Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textSecondary)),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -417,8 +441,10 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
                     label: Text(c),
                     selected: isSelected,
                     selectedColor: AppColors.primary,
+                    backgroundColor: AppColors.surfaceElevated,
+                    side: BorderSide(color: isSelected ? AppColors.primary : AppColors.border, width: 1),
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      color: isSelected ? Colors.white : AppColors.textSecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -437,10 +463,23 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
                     child: TextFormField(
                       controller: _targetController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                      decoration: InputDecoration(
                         labelText: 'Target Count *',
+                        labelStyle: const TextStyle(color: AppColors.textSecondary),
                         hintText: '4',
-                        prefixIcon: Icon(Icons.numbers_rounded),
+                        hintStyle: const TextStyle(color: AppColors.textTertiary),
+                        filled: true,
+                        fillColor: AppColors.surfaceElevated,
+                        prefixIcon: const Icon(Icons.numbers_rounded, color: AppColors.textSecondary),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.border, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                        ),
                       ),
                       validator: (v) {
                         final n = int.tryParse(v ?? '');
@@ -453,10 +492,23 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
                   Expanded(
                     child: TextFormField(
                       controller: _unitController,
-                      decoration: const InputDecoration(
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                      decoration: InputDecoration(
                         labelText: 'Unit / Metric *',
+                        labelStyle: const TextStyle(color: AppColors.textSecondary),
                         hintText: 'calls, times, walks',
-                        prefixIcon: Icon(Icons.straighten_rounded),
+                        hintStyle: const TextStyle(color: AppColors.textTertiary),
+                        filled: true,
+                        fillColor: AppColors.surfaceElevated,
+                        prefixIcon: const Icon(Icons.straighten_rounded, color: AppColors.textSecondary),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.border, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                        ),
                       ),
                     ),
                   ),
@@ -471,9 +523,9 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                    color: AppColors.surfaceElevated,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
+                    border: Border.all(color: AppColors.border, width: 1),
                   ),
                   child: Row(
                     children: [
@@ -487,17 +539,17 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: _deadline != null ? AppColors.textPrimary : Colors.grey.shade600,
+                            color: _deadline != null ? AppColors.textPrimary : AppColors.textSecondary,
                           ),
                         ),
                       ),
                       if (_deadline != null)
                         IconButton(
-                          icon: const Icon(Icons.clear, size: 18),
+                          icon: const Icon(Icons.clear, size: 18, color: AppColors.textSecondary),
                           onPressed: () => setState(() => _deadline = null),
                         )
                       else
-                        const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                        const Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary),
                     ],
                   ),
                 ),
@@ -507,8 +559,9 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
               // Shared Goal Toggle
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Shared Goal', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                subtitle: const Text('Visible to circle or partners', style: TextStyle(fontSize: 12)),
+                activeColor: AppColors.primary,
+                title: const Text('Shared Goal', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+                subtitle: const Text('Visible to circle or partners', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                 value: _isShared,
                 onChanged: (v) => setState(() => _isShared = v),
               ),
@@ -518,10 +571,23 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
               TextFormField(
                 controller: _descController,
                 maxLines: 2,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
                   labelText: 'Motivation / Notes (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Stay consistent with meaningful connections.',
-                  prefixIcon: Icon(Icons.notes_rounded),
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  prefixIcon: const Icon(Icons.notes_rounded, color: AppColors.textSecondary),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -532,7 +598,7 @@ class _CreateEditGoalSheetState extends State<CreateEditGoalSheet> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
                 child: Text(
                   isEditing ? 'Save Changes' : 'Create Goal',

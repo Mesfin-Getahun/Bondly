@@ -131,7 +131,20 @@ class _GroupsPageState extends State<GroupsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Circles & Groups', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        titleTextStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: AppColors.border),
+        ),
+        title: const Text('Circles & Groups'),
         actions: [
           IconButton(
             tooltip: 'New Circle',
@@ -144,7 +157,7 @@ class _GroupsPageState extends State<GroupsPage> {
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
-        label: const Text('New Circle'),
+        label: const Text('New Circle', style: TextStyle(fontWeight: FontWeight.bold)),
         onPressed: () => _showCreateEditSheet(),
       ),
       body: ListenableBuilder(
@@ -163,13 +176,26 @@ class _GroupsPageState extends State<GroupsPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: TextField(
                   controller: _searchController,
+                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                   onChanged: _controller.setSearchQuery,
                   decoration: InputDecoration(
                     hintText: 'Search circles by name or topic...',
+                    hintStyle: const TextStyle(color: AppColors.textTertiary, fontSize: 13),
+                    filled: true,
+                    fillColor: AppColors.surface,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppColors.border, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                    ),
                     prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear_rounded),
+                            icon: const Icon(Icons.clear_rounded, color: AppColors.textSecondary),
                             onPressed: () {
                               _searchController.clear();
                               _controller.setSearchQuery('');
@@ -196,8 +222,13 @@ class _GroupsPageState extends State<GroupsPage> {
                         label: Text(cat),
                         selected: isSelected,
                         selectedColor: AppColors.primary,
+                        backgroundColor: AppColors.surface,
+                        side: BorderSide(
+                          color: isSelected ? AppColors.primary : AppColors.border,
+                          width: 1,
+                        ),
                         labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : AppColors.textPrimary,
+                          color: isSelected ? Colors.white : AppColors.textSecondary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -220,14 +251,22 @@ class _GroupsPageState extends State<GroupsPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.diversity_3_outlined, size: 60, color: Colors.grey.shade400),
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surface,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: AppColors.border, width: 1),
+                                ),
+                                child: const Icon(Icons.diversity_3_outlined, size: 48, color: AppColors.textTertiary),
+                              ),
                               const SizedBox(height: 16),
                               Text(
                                 _controller.searchQuery.isNotEmpty
                                     ? 'No circles matching "${_controller.searchQuery}"'
                                     : 'No circles yet.\nCreate a circle to organize close friends, colleagues, or family!',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.4),
+                                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
                               ),
                             ],
                           ),

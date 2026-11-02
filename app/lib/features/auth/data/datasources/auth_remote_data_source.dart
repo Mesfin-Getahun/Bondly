@@ -114,7 +114,10 @@ class FirebaseAuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthModel> signInAnonymously() async {
     try {
-      final credential = await _firebaseAuth.signInAnonymously();
+      final credential = await _firebaseAuth.signInAnonymously().timeout(
+        const Duration(seconds: 3),
+        onTimeout: () => throw Exception('Firebase auth timeout, switching to Guest Preview'),
+      );
       if (credential.user == null) {
         throw AuthException('Anonymous sign-in failed.');
       }

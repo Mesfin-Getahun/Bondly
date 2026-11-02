@@ -23,15 +23,16 @@ class PrivacyToggleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
+      activeColor: AppColors.primary,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       secondary: Icon(icon, color: AppColors.primary),
       title: Text(
         title,
-        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+        style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
       ),
       value: value,
       onChanged: onChanged,
@@ -49,7 +50,12 @@ class DataExportCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Your Data Archive'),
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppColors.border, width: 1),
+        ),
+        title: const Text('Your Data Archive', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: double.maxFinite,
           child: Column(
@@ -58,21 +64,25 @@ class DataExportCard extends StatelessWidget {
             children: [
               const Text(
                 'Below is your complete private relationship data exported in JSON format.',
-                style: TextStyle(fontSize: 12.5),
+                style: TextStyle(fontSize: 12.5, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 12),
               Container(
                 height: 220,
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border, width: 1),
                 ),
                 child: SingleChildScrollView(
                   child: Text(
                     json,
-                    style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 11,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
               ),
@@ -80,8 +90,16 @@ class DataExportCard extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close', style: TextStyle(color: AppColors.textSecondary)),
+          ),
           ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
             icon: const Icon(Icons.copy_rounded, size: 16),
             label: const Text('Copy to Clipboard'),
             onPressed: () {
@@ -103,29 +121,29 @@ class DataExportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: Colors.blue.shade50,
-                child: Icon(Icons.download_rounded, color: Colors.blue.shade700, size: 20),
+                backgroundColor: AppColors.primaryMuted,
+                child: Icon(Icons.download_rounded, color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 12),
-              const Expanded(
+              SizedBox(width: 12),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Data Portability', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    Text('Download an archive of your private records & notes', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text('Data Portability', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textPrimary)),
+                    Text('Download an archive of your private records & notes', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                   ],
                 ),
               ),
@@ -142,12 +160,17 @@ class DataExportCard extends StatelessWidget {
                     }
                   },
             icon: controller.isExporting
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.file_download_outlined),
-            label: Text(controller.isExporting ? 'Generating Archive...' : 'Export My Data (JSON)'),
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary))
+                : const Icon(Icons.file_download_outlined, color: AppColors.primary),
+            label: Text(
+              controller.isExporting ? 'Generating Archive...' : 'Export My Data (JSON)',
+              style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+            ),
             style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(42),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              minimumSize: const Size.fromHeight(44),
+              backgroundColor: AppColors.surfaceElevated,
+              side: const BorderSide(color: AppColors.border, width: 1),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
         ],
@@ -174,35 +197,55 @@ class AccountDeletionCard extends StatelessWidget {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: const Text('Permanent Account Deletion'),
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: AppColors.border, width: 1),
+          ),
+          title: const Text('Permanent Account Deletion', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
                 'This will permanently delete your account, relationships, private notes, follow-up cadences, and goals. This action CANNOT be undone.',
-                style: TextStyle(fontSize: 13, color: Colors.red),
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 14),
               const Text(
                 'Type "DELETE" below to confirm:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.textPrimary),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: confirmCtrl,
+                style: const TextStyle(color: AppColors.textPrimary),
                 onChanged: (_) => setDialogState(() {}),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'DELETE',
+                  hintStyle: const TextStyle(color: AppColors.textTertiary),
                   isDense: true,
+                  filled: true,
+                  fillColor: AppColors.background,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: AppColors.error),
+                  ),
                 ),
               ),
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+            ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
               onPressed: confirmCtrl.text.trim() == 'DELETE'
                   ? () async {
                       Navigator.pop(ctx);
@@ -221,11 +264,11 @@ class AccountDeletionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.error.withAlpha(90), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,16 +277,16 @@ class AccountDeletionCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: Colors.red.shade100,
-                child: Icon(Icons.delete_forever_rounded, color: Colors.red.shade800, size: 20),
+                backgroundColor: AppColors.error.withAlpha(25),
+                child: const Icon(Icons.delete_forever_rounded, color: AppColors.error, size: 20),
               ),
               const SizedBox(width: 12),
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Delete Account & Data', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.red)),
-                    Text('Irreversible deletion of your entire Bondly account', style: TextStyle(fontSize: 12, color: Colors.red)),
+                    Text('Delete Account & Data', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.error)),
+                    Text('Irreversible deletion of your entire Bondly account', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                   ],
                 ),
               ),
@@ -253,10 +296,10 @@ class AccountDeletionCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () => _confirmDelete(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade700,
+              backgroundColor: AppColors.error,
               foregroundColor: Colors.white,
               minimumSize: const Size.fromHeight(42),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: const Text('Request Account Deletion'),
           ),

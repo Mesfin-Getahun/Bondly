@@ -27,26 +27,38 @@ class NotificationTile extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: Colors.red.shade400,
+        decoration: BoxDecoration(
+          color: AppColors.error.withAlpha(200),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
-          color: isUnread ? AppColors.primary.withAlpha(12) : Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          color: isUnread ? AppColors.surfaceElevated : AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isUnread ? AppColors.primary.withAlpha(40) : Colors.grey.shade200,
+            color: isUnread ? AppColors.primary.withAlpha(80) : AppColors.border,
+            width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(20),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: ListTile(
           onTap: onTap,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           leading: Stack(
             clipBehavior: Clip.none,
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: notification.color.withAlpha(25),
+                backgroundColor: notification.color.withAlpha(35),
                 child: Icon(notification.icon, color: notification.color, size: 20),
               ),
               if (isUnread)
@@ -80,7 +92,7 @@ class NotificationTile extends StatelessWidget {
                 notification.body,
                 style: TextStyle(
                   fontSize: 12.5,
-                  color: isUnread ? Colors.black87 : Colors.grey.shade600,
+                  color: isUnread ? AppColors.textPrimary : AppColors.textSecondary,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -88,12 +100,12 @@ class NotificationTile extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 AppDateUtils.timeAgo(notification.createdAt),
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade400),
+                style: const TextStyle(fontSize: 11, color: AppColors.microLabel),
               ),
             ],
           ),
           trailing: IconButton(
-            icon: const Icon(Icons.close, size: 16, color: Colors.grey),
+            icon: const Icon(Icons.close, size: 16, color: AppColors.textSecondary),
             onPressed: onDelete,
           ),
         ),

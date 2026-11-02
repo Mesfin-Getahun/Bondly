@@ -72,7 +72,15 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
         titleSpacing: 0,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: AppColors.border),
+        ),
         title: Row(
           children: [
             CircleAvatar(
@@ -94,7 +102,11 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                 children: [
                   Text(
                     otherName,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -127,16 +139,24 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.chat_bubble_outline_rounded, size: 48, color: Colors.grey.shade400),
-                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.all(18),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppColors.border, width: 1),
+                            ),
+                            child: const Icon(Icons.chat_bubble_outline_rounded, size: 40, color: AppColors.textSecondary),
+                          ),
+                          const SizedBox(height: 16),
                           Text(
                             'Say hello to $otherName 👋',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey.shade700),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           const Text(
                             'Send a direct message to start catching up.',
-                            style: TextStyle(fontSize: 13, color: Colors.grey),
+                            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                           ),
                         ],
                       ),
@@ -161,15 +181,9 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
           // Message Input Field
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(6),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
-                ),
-              ],
+            decoration: const BoxDecoration(
+              color: AppColors.surface,
+              border: Border(top: BorderSide(color: AppColors.border, width: 1)),
             ),
             child: SafeArea(
               child: Row(
@@ -177,18 +191,23 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                   Expanded(
                     child: TextField(
                       controller: _textController,
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                       textCapitalization: TextCapitalization.sentences,
                       maxLines: null,
                       onSubmitted: (_) => _sendMessage(),
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
-                        hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
+                        hintStyle: const TextStyle(fontSize: 14, color: AppColors.textTertiary),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         filled: true,
-                        fillColor: Colors.grey.shade100,
-                        border: OutlineInputBorder(
+                        fillColor: AppColors.surfaceElevated,
+                        enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
+                          borderSide: const BorderSide(color: AppColors.border, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                         ),
                       ),
                     ),

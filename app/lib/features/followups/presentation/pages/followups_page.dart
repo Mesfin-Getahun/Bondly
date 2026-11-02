@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../dashboard/presentation/widgets/dashboard_widget.dart';
 import '../../domain/entities/followups_entity.dart';
 import '../controllers/followups_controller.dart';
 import '../widgets/followups_widget.dart';
@@ -8,6 +9,7 @@ import '../widgets/followups_widget.dart';
 ///
 /// CRITICAL PRIVACY REQUIREMENT:
 /// All reminders on this page belong strictly to the authenticated user.
+/// Adheres strictly to AGENTS.md dark modern styling and privacy standards.
 class FollowupsPage extends StatefulWidget {
   final String? currentUserId;
   final FollowupsController? controller;
@@ -55,9 +57,7 @@ class _FollowupsPageState extends State<FollowupsPage> with SingleTickerProvider
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) => AddEditFollowupSheet(
         controller: _controller,
         existing: existing,
@@ -70,19 +70,33 @@ class _FollowupsPageState extends State<FollowupsPage> with SingleTickerProvider
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Follow-ups & Reminders', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        title: const Text(
+          'Follow-ups & Reminders',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+        ),
         actions: [
           IconButton(
             tooltip: 'Add Reminder',
-            icon: const Icon(Icons.add_alert_rounded),
+            icon: const Icon(Icons.add_alert_rounded, color: AppColors.textPrimary),
             onPressed: () => _showAddFollowupSheet(),
           ),
+          const SizedBox(width: 8),
         ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,
-          unselectedLabelColor: Colors.grey,
+          unselectedLabelColor: AppColors.microLabel,
           indicatorColor: AppColors.primary,
+          indicatorSize: TabBarIndicatorSize.tab,
           tabs: [
             const Tab(text: 'Upcoming'),
             ListenableBuilder(
@@ -106,7 +120,7 @@ class _FollowupsPageState extends State<FollowupsPage> with SingleTickerProvider
                             '$urgentCount',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 11,
+                              fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -124,34 +138,48 @@ class _FollowupsPageState extends State<FollowupsPage> with SingleTickerProvider
       body: ListenableBuilder(
         listenable: _controller,
         builder: (context, _) {
-          final pending = _controller.pendingFollowups;
-          final urgent = [
-            ..._controller.overdueFollowups,
-            ..._controller.todayFollowups,
-          ];
-          final completed = _controller.completedFollowups;
-
           return Column(
             children: [
+              // AGENTS.md Rule 4: Privacy Status Component
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: PrivacyStatusBanner(),
+              ),
+
               // Search Bar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: TextField(
                   controller: _searchController,
+                  style: const TextStyle(color: AppColors.textPrimary),
                   onChanged: _controller.setSearchQuery,
                   decoration: InputDecoration(
-                    hintText: 'Search reminders by title or contact...',
-                    prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary),
+                    hintText: 'Search reminders or contacts...',
+                    hintStyle: const TextStyle(color: AppColors.microLabel, fontSize: 13),
+                    prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 20),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 18, color: AppColors.textSecondary),
+                            onPressed: () {
+                              _searchController.clear();
+                              _controller.setSearchQuery('');
+                            },
+                          )
+                        : null,
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: AppColors.surface,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderSide: const BorderSide(color: AppColors.border, width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.grey.shade200),
+                      borderSide: const BorderSide(color: AppColors.border, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                     ),
                   ),
                 ),
@@ -159,77 +187,20 @@ class _FollowupsPageState extends State<FollowupsPage> with SingleTickerProvider
 
               // Tab Views
               Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // 1. Upcoming Tab
-                    _controller.isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : pending.isEmpty
-                            ? _EmptyFollowupsView(onAdd: () => _showAddFollowupSheet())
-                            : ListView.builder(
-                                padding: const EdgeInsets.all(16),
-                                itemCount: pending.length,
-                                itemBuilder: (context, idx) {
-                                  final item = pending[idx];
-                                  return FollowupTile(
-                                    followup: item,
-                                    onToggle: (val) => _controller.toggleComplete(item.id, val ?? false),
-                                    onDelete: () => _controller.deleteFollowup(item.id),
-                                    onEdit: () => _showAddFollowupSheet(item),
-                                  );
-                                },
-                              ),
-
-                    // 2. Urgent / Today Tab
-                    _controller.isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : urgent.isEmpty
-                            ? const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(32),
-                                  child: Text(
-                                    '🎉 All caught up! No overdue or today reminders.',
-                                    style: TextStyle(color: Colors.grey, fontSize: 14),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              )
-                            : ListView.builder(
-                                padding: const EdgeInsets.all(16),
-                                itemCount: urgent.length,
-                                itemBuilder: (context, idx) {
-                                  final item = urgent[idx];
-                                  return FollowupTile(
-                                    followup: item,
-                                    onToggle: (val) => _controller.toggleComplete(item.id, val ?? false),
-                                    onDelete: () => _controller.deleteFollowup(item.id),
-                                    onEdit: () => _showAddFollowupSheet(item),
-                                  );
-                                },
-                              ),
-
-                    // 3. Completed Tab
-                    _controller.isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : completed.isEmpty
-                            ? const Center(
-                                child: Text('No completed follow-ups yet.', style: TextStyle(color: Colors.grey)),
-                              )
-                            : ListView.builder(
-                                padding: const EdgeInsets.all(16),
-                                itemCount: completed.length,
-                                itemBuilder: (context, idx) {
-                                  final item = completed[idx];
-                                  return FollowupTile(
-                                    followup: item,
-                                    onToggle: (val) => _controller.toggleComplete(item.id, val ?? false),
-                                    onDelete: () => _controller.deleteFollowup(item.id),
-                                  );
-                                },
-                              ),
-                  ],
-                ),
+                child: _controller.isLoading
+                    ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                    : TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildList(_controller.upcomingFollowups, 'No upcoming follow-ups scheduled.'),
+                          _buildList(
+                            _controller.dueTodayOrOverdue,
+                            'All caught up! No overdue reminders for today.',
+                            isUrgentTab: true,
+                          ),
+                          _buildList(_controller.completedFollowups, 'No completed follow-ups yet.'),
+                        ],
+                      ),
               ),
             ],
           );
@@ -238,57 +209,67 @@ class _FollowupsPageState extends State<FollowupsPage> with SingleTickerProvider
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        elevation: 4,
         onPressed: () => _showAddFollowupSheet(),
         icon: const Icon(Icons.alarm_add_rounded),
-        label: const Text('Add Follow-up', style: TextStyle(fontWeight: FontWeight.bold)),
+        label: const Text('Add Reminder', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
-}
 
-class _EmptyFollowupsView extends StatelessWidget {
-  final VoidCallback onAdd;
-
-  const _EmptyFollowupsView({required this.onAdd});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 36,
-              backgroundColor: AppColors.primary.withAlpha(20),
-              child: const Icon(Icons.alarm_rounded, size: 36, color: AppColors.primary),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'No Scheduled Follow-ups',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Set recurring reminders to stay in touch with friends, celebrate milestones, and never lose contact.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: onAdd,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  Widget _buildList(List<FollowupEntity> items, String emptyMessage, {bool isUrgentTab = false}) {
+    if (items.isEmpty) {
+      return Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: isUrgentTab
+                      ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                      : AppColors.primary.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isUrgentTab
+                        ? const Color(0xFF10B981).withValues(alpha: 0.3)
+                        : AppColors.primary.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Icon(
+                  isUrgentTab ? Icons.check_circle_outline_rounded : Icons.alarm_rounded,
+                  size: 36,
+                  color: isUrgentTab ? const Color(0xFF10B981) : AppColors.primary,
+                ),
               ),
-              icon: const Icon(Icons.add),
-              label: const Text('Schedule Reminder', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                emptyMessage,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13.5, height: 1.4),
+              ),
+            ],
+          ),
         ),
-      ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return FollowupTile(
+          followup: item,
+          onToggle: (val) => _controller.toggleComplete(item.id, val ?? false),
+          onDelete: () => _controller.deleteFollowup(item.id),
+          onEdit: () => _showAddFollowupSheet(item),
+        );
+      },
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../dashboard/presentation/widgets/dashboard_widget.dart';
 import '../controllers/insights_controller.dart';
 import '../widgets/insights_widget.dart';
 
@@ -54,7 +55,20 @@ class _InsightsPageState extends State<InsightsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Relationship Insights', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        titleTextStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: AppColors.border),
+        ),
+        title: const Text('Relationship Insights'),
         actions: [
           IconButton(
             tooltip: 'Refresh Insights',
@@ -78,6 +92,10 @@ class _InsightsPageState extends State<InsightsPage> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                // Privacy Banner
+                PrivacyStatusBanner(),
+                const SizedBox(height: 16),
+
                 // Health Score Card
                 if (summary != null) HealthScoreCard(summary: summary),
 
@@ -104,23 +122,27 @@ class _InsightsPageState extends State<InsightsPage> {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade200),
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.border, width: 1),
                     ),
-                    child: Column(
+                    child: const Column(
                       children: [
-                        Icon(Icons.auto_awesome_rounded, size: 48, color: Colors.amber.shade400),
-                        const SizedBox(height: 12),
-                        const Text(
+                        Icon(Icons.auto_awesome_rounded, size: 44, color: AppColors.primary),
+                        SizedBox(height: 12),
+                        Text(
                           'Your Relationships Are in Harmony!',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 6),
                         Text(
                           'You are on track with your relationship cadences. Keep up the great connection habits!',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12.5, color: Colors.grey.shade600),
+                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
                         ),
                       ],
                     ),
@@ -130,7 +152,6 @@ class _InsightsPageState extends State<InsightsPage> {
                     (item) => InsightRecommendationCard(
                       insight: item,
                       onAction: () {
-                        // Navigate to relationships or followups based on insight
                         Navigator.pushNamed(context, '/relationships');
                       },
                       onDismiss: () => _controller.dismiss(item.id),

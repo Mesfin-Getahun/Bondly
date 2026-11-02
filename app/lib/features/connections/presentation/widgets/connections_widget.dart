@@ -30,14 +30,14 @@ class FriendConnectionCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(6),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withAlpha(25),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -74,7 +74,7 @@ class FriendConnectionCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    const Icon(Icons.check_circle_rounded, size: 14, color: Colors.green),
+                    const Icon(Icons.check_circle_rounded, size: 14, color: Colors.greenAccent),
                     const SizedBox(width: 4),
                     Text(
                       'Connected • ${AppDateUtils.timeAgo(connection.updatedAt)}',
@@ -91,7 +91,7 @@ class FriendConnectionCard extends StatelessWidget {
             onPressed: onMessage,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary.withAlpha(25),
-              foregroundColor: AppColors.primaryDark,
+              foregroundColor: AppColors.primary,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -102,7 +102,8 @@ class FriendConnectionCard extends StatelessWidget {
 
           // More Options Menu
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+            icon: const Icon(Icons.more_vert_rounded, color: AppColors.textTertiary),
+            color: AppColors.surfaceElevated,
             onSelected: (val) {
               if (val == 'remove') onRemove();
               if (val == 'block') onBlock();
@@ -112,9 +113,9 @@ class FriendConnectionCard extends StatelessWidget {
                 value: 'remove',
                 child: Row(
                   children: [
-                    Icon(Icons.person_remove_outlined, size: 18, color: Colors.red),
+                    Icon(Icons.person_remove_outlined, size: 18, color: AppColors.error),
                     SizedBox(width: 10),
-                    Text('Remove Friend', style: TextStyle(color: Colors.red)),
+                    Text('Remove Friend', style: TextStyle(color: AppColors.error)),
                   ],
                 ),
               ),
@@ -122,9 +123,9 @@ class FriendConnectionCard extends StatelessWidget {
                 value: 'block',
                 child: Row(
                   children: [
-                    Icon(Icons.block_flipped, size: 18, color: Colors.grey),
+                    Icon(Icons.block_flipped, size: 18, color: AppColors.textSecondary),
                     SizedBox(width: 10),
-                    Text('Block User'),
+                    Text('Block User', style: TextStyle(color: AppColors.textPrimary)),
                   ],
                 ),
               ),
@@ -160,14 +161,14 @@ class IncomingRequestCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withAlpha(50)),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.primary.withAlpha(80), width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withAlpha(8),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withAlpha(25),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -194,7 +195,7 @@ class IncomingRequestCard extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -213,8 +214,9 @@ class IncomingRequestCard extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: onDecline,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.grey.shade700,
-                    side: BorderSide(color: Colors.grey.shade300),
+                    foregroundColor: AppColors.textSecondary,
+                    backgroundColor: AppColors.surfaceElevated,
+                    side: const BorderSide(color: AppColors.border, width: 1),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   child: const Text('Decline'),
@@ -260,18 +262,18 @@ class SentRequestCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 22,
-            backgroundColor: Colors.grey.shade100,
+            backgroundColor: AppColors.surfaceElevated,
             child: Text(
               initials,
-              style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 14),
@@ -281,19 +283,19 @@ class SentRequestCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Pending approval • ${AppDateUtils.timeAgo(connection.createdAt)}',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                 ),
               ],
             ),
           ),
           TextButton(
             onPressed: onCancel,
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -356,7 +358,11 @@ class _SendRequestSheetState extends State<SendRequestSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -374,10 +380,14 @@ class _SendRequestSheetState extends State<SendRequestSheet> {
               children: [
                 const Text(
                   'Connect with a Friend',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(Icons.close, color: AppColors.textSecondary),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -385,20 +395,46 @@ class _SendRequestSheetState extends State<SendRequestSheet> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+              decoration: InputDecoration(
                 labelText: "Friend's Name *",
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 hintText: 'Sarah Jenkins',
-                prefixIcon: Icon(Icons.person_outline),
+                hintStyle: const TextStyle(color: AppColors.textTertiary),
+                filled: true,
+                fillColor: AppColors.surfaceElevated,
+                prefixIcon: const Icon(Icons.person_outline, color: AppColors.textSecondary),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.border, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                ),
               ),
               validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a name' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _userIdController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+              decoration: InputDecoration(
                 labelText: "Friend's User ID or Email *",
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 hintText: 'Enter user UID or account identifier',
-                prefixIcon: Icon(Icons.tag_rounded),
+                hintStyle: const TextStyle(color: AppColors.textTertiary),
+                filled: true,
+                fillColor: AppColors.surfaceElevated,
+                prefixIcon: const Icon(Icons.tag_rounded, color: AppColors.textSecondary),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.border, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                ),
               ),
               validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a User ID' : null,
             ),
@@ -409,9 +445,9 @@ class _SendRequestSheetState extends State<SendRequestSheet> {
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
-              child: const Text('Send Friend Request', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text('Send Friend Request', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
           ],
         ),

@@ -66,6 +66,12 @@ class FollowupsController extends ChangeNotifier {
     return _filter(_allFollowups.where((f) => f.isCompleted).toList());
   }
 
+  List<FollowupEntity> get upcomingFollowups => pendingFollowups;
+
+  List<FollowupEntity> get dueTodayOrOverdue {
+    return _filter(_allFollowups.where((f) => !f.isCompleted && (f.isDueToday || f.isOverdue)).toList());
+  }
+
   int get overdueCount => _allFollowups.where((f) => f.isOverdue).length;
   int get todayCount => _allFollowups.where((f) => f.isDueToday).length;
 

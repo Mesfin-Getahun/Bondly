@@ -66,7 +66,20 @@ class _UsersPageState extends State<UsersPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Profile & Settings', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        titleTextStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: AppColors.border),
+        ),
+        title: const Text('Profile & Settings'),
         actions: [
           IconButton(
             tooltip: 'Edit Profile',
@@ -98,14 +111,14 @@ class _UsersPageState extends State<UsersPage> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border, width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha(5),
+                      color: Colors.black.withAlpha(25),
                       blurRadius: 10,
-                      offset: const Offset(0, 2),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -153,13 +166,13 @@ class _UsersPageState extends State<UsersPage> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: Colors.orange.shade50,
+                                    color: AppColors.primary.withAlpha(25),
                                     borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: Colors.orange.shade200),
+                                    border: Border.all(color: AppColors.primary.withAlpha(80)),
                                   ),
                                   child: const Text(
                                     'Anonymous Session',
-                                    style: TextStyle(fontSize: 11, color: Colors.deepOrange),
+                                    style: TextStyle(fontSize: 11, color: AppColors.primary, fontWeight: FontWeight.w600),
                                   ),
                                 ),
                               ],
@@ -172,10 +185,10 @@ class _UsersPageState extends State<UsersPage> {
                       const SizedBox(height: 14),
                       Text(
                         bio,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
-                          color: Colors.grey.shade700,
-                          height: 1.3,
+                          color: AppColors.textSecondary,
+                          height: 1.35,
                         ),
                       ),
                     ],
@@ -193,9 +206,9 @@ class _UsersPageState extends State<UsersPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border, width: 1),
                 ),
                 child: Row(
                   children: [
@@ -205,14 +218,16 @@ class _UsersPageState extends State<UsersPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Default Cadence', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                          Text('Suggested catch-up interval for new friends', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          Text('Default Cadence', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textPrimary)),
+                          Text('Suggested catch-up interval for new friends', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                         ],
                       ),
                     ),
                     DropdownButton<int>(
                       value: cadenceDays,
                       underline: const SizedBox(),
+                      dropdownColor: AppColors.surfaceElevated,
+                      style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 13),
                       items: const [
                         DropdownMenuItem(value: 7, child: Text('7 Days')),
                         DropdownMenuItem(value: 14, child: Text('14 Days')),
@@ -380,24 +395,26 @@ class _UsersPageState extends State<UsersPage> {
 
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border, width: 1),
                 ),
                 child: Column(
                   children: [
                     SwitchListTile(
+                      activeColor: AppColors.primary,
                       secondary: const Icon(Icons.notifications_active_outlined, color: AppColors.primary),
-                      title: const Text('Push Reminders', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                      subtitle: const Text('Daily follow-up reminders and connection requests', style: TextStyle(fontSize: 12)),
+                      title: const Text('Push Reminders', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+                      subtitle: const Text('Daily follow-up reminders and connection requests', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                       value: pushNotifications,
                       onChanged: (val) => _controller.togglePushNotifications(val),
                     ),
-                    const Divider(height: 1),
+                    const Divider(height: 1, color: AppColors.border),
                     SwitchListTile(
+                      activeColor: AppColors.primary,
                       secondary: const Icon(Icons.visibility_off_outlined, color: AppColors.primary),
-                      title: const Text('Private Profile', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                      subtitle: const Text('Hide profile from public friend search', style: TextStyle(fontSize: 12)),
+                      title: const Text('Private Profile', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+                      subtitle: const Text('Hide profile from public friend search', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                       value: isPrivate,
                       onChanged: (val) => _controller.toggleIsPrivate(val),
                     ),
@@ -415,7 +432,7 @@ class _UsersPageState extends State<UsersPage> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.error,
                       side: const BorderSide(color: AppColors.error),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
                     icon: const Icon(Icons.logout_rounded),
                     label: const Text('Sign Out of Bondly'),
@@ -447,15 +464,15 @@ class _SettingsTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: ListTile(
         leading: Icon(icon, color: AppColors.primary),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-        subtitle: Text(subtitle, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
-        trailing: const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+        subtitle: Text(subtitle, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+        trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary),
         onTap: onTap,
       ),
     );

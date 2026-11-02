@@ -53,7 +53,20 @@ class _PrivacyPageState extends State<PrivacyPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Privacy & Security', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        titleTextStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: AppColors.border),
+        ),
+        title: const Text('Privacy & Security'),
       ),
       body: ListenableBuilder(
         listenable: _controller,
@@ -65,18 +78,18 @@ class _PrivacyPageState extends State<PrivacyPage> {
             children: [
               // Owner-Only Privacy Guarantee Card
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8F5E9),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.green.shade200),
+                  color: AppColors.privacySurface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.privacyBorder, width: 1),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 22,
-                      backgroundColor: Colors.green.shade100,
-                      child: Icon(Icons.lock_rounded, color: Colors.green.shade800, size: 22),
+                      backgroundColor: AppColors.privacyAccent.withAlpha(35),
+                      child: const Icon(Icons.lock_rounded, color: AppColors.privacyAccent, size: 22),
                     ),
                     const SizedBox(width: 14),
                     const Expanded(
@@ -87,14 +100,14 @@ class _PrivacyPageState extends State<PrivacyPage> {
                             'Owner-Only Privacy Principle',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Color(0xFF1B5E20),
+                              fontSize: 15,
+                              color: AppColors.textPrimary,
                             ),
                           ),
-                          SizedBox(height: 3),
+                          SizedBox(height: 4),
                           Text(
                             'Your relationship notes, interaction logs, and private reminders belong only to you. Mutual connections never see your private notes.',
-                            style: TextStyle(fontSize: 12, color: Color(0xFF2E7D32)),
+                            style: TextStyle(fontSize: 12.5, color: AppColors.textSecondary, height: 1.35),
                           ),
                         ],
                       ),
@@ -113,9 +126,9 @@ class _PrivacyPageState extends State<PrivacyPage> {
 
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border, width: 1),
                 ),
                 child: Column(
                   children: [
@@ -126,7 +139,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                       value: settings?.searchVisibility ?? true,
                       onChanged: (val) => _controller.updateToggle(searchVisibility: val),
                     ),
-                    const Divider(height: 1),
+                    const Divider(height: 1, color: AppColors.border),
                     PrivacyToggleTile(
                       icon: Icons.auto_awesome_rounded,
                       title: 'AI Relationship Recommendations',
@@ -135,7 +148,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                       onChanged: (val) =>
                           _controller.updateToggle(personalizedRecommendations: val),
                     ),
-                    const Divider(height: 1),
+                    const Divider(height: 1, color: AppColors.border),
                     PrivacyToggleTile(
                       icon: Icons.done_all_rounded,
                       title: 'Read Receipts',
@@ -143,7 +156,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                       value: settings?.readReceipts ?? true,
                       onChanged: (val) => _controller.updateToggle(readReceipts: val),
                     ),
-                    const Divider(height: 1),
+                    const Divider(height: 1, color: AppColors.border),
                     PrivacyToggleTile(
                       icon: Icons.query_stats_rounded,
                       title: 'Anonymous Usage Analytics',

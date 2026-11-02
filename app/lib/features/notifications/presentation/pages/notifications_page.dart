@@ -54,11 +54,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Notifications', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        shape: const Border(bottom: BorderSide(color: AppColors.border, width: 1)),
+        title: const Text(
+          'Notifications',
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+        ),
         actions: [
-          TextButton(
+          TextButton.icon(
             onPressed: () => _controller.markAllRead(),
-            child: const Text('Mark all read'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+            icon: const Icon(Icons.done_all_rounded, size: 18),
+            label: const Text('Mark all read', style: TextStyle(fontWeight: FontWeight.w600)),
           ),
           const SizedBox(width: 8),
         ],
@@ -76,15 +84,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
             children: [
               // Filter Chips Row
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     ChoiceChip(
                       label: Text('All (${_controller.totalCount})'),
                       selected: _controller.filter == 'All',
                       selectedColor: AppColors.primary,
+                      backgroundColor: AppColors.surfaceElevated,
+                      side: BorderSide(
+                        color: _controller.filter == 'All' ? AppColors.primary : AppColors.border,
+                        width: 1,
+                      ),
                       labelStyle: TextStyle(
-                        color: _controller.filter == 'All' ? Colors.white : AppColors.textPrimary,
+                        color: _controller.filter == 'All' ? Colors.white : AppColors.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
@@ -97,8 +110,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       label: Text('Unread (${_controller.unreadCount})'),
                       selected: _controller.filter == 'Unread',
                       selectedColor: AppColors.primary,
+                      backgroundColor: AppColors.surfaceElevated,
+                      side: BorderSide(
+                        color: _controller.filter == 'Unread' ? AppColors.primary : AppColors.border,
+                        width: 1,
+                      ),
                       labelStyle: TextStyle(
-                        color: _controller.filter == 'Unread' ? Colors.white : AppColors.textPrimary,
+                        color: _controller.filter == 'Unread' ? Colors.white : AppColors.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
@@ -119,14 +137,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.notifications_off_outlined, size: 60, color: Colors.grey.shade400),
+                              const Icon(Icons.notifications_off_outlined, size: 60, color: AppColors.microLabel),
                               const SizedBox(height: 16),
                               Text(
                                 _controller.filter == 'Unread'
                                     ? 'No unread notifications.\nYou\'re all caught up!'
                                     : 'No notifications yet.\nYou will receive updates when friends connect or send messages.',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.4),
+                                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
                               ),
                             ],
                           ),

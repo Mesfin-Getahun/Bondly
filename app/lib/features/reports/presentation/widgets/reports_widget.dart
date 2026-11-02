@@ -18,12 +18,12 @@ class ReportTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(5),
+            color: Colors.black.withAlpha(25),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -40,8 +40,8 @@ class ReportTile extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 16,
-                    backgroundColor: Colors.red.shade50,
-                    child: Icon(Icons.shield_outlined, size: 18, color: Colors.red.shade700),
+                    backgroundColor: AppColors.error.withAlpha(30),
+                    child: const Icon(Icons.shield_outlined, size: 18, color: AppColors.error),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -57,9 +57,9 @@ class ReportTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusColor.withAlpha(20),
+                  color: statusColor.withAlpha(30),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: statusColor.withAlpha(60)),
+                  border: Border.all(color: statusColor.withAlpha(90)),
                 ),
                 child: Text(
                   report.statusLabel.toUpperCase(),
@@ -78,14 +78,18 @@ class ReportTile extends StatelessWidget {
           if (report.targetUserName?.isNotEmpty == true) ...[
             Text(
               'Reported Entity: ${report.targetUserName}',
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 4),
           ],
 
           Text(
             report.description,
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade700, height: 1.3),
+            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.3),
           ),
 
           if (report.resolutionNotes?.isNotEmpty == true) ...[
@@ -93,24 +97,24 @@ class ReportTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade200),
+                color: AppColors.surfaceElevated,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.border),
               ),
               child: Text(
                 'Moderation Response: ${report.resolutionNotes}',
-                style: const TextStyle(fontSize: 12, color: Colors.black87),
+                style: const TextStyle(fontSize: 12, color: AppColors.textPrimary),
               ),
             ),
           ],
 
           const SizedBox(height: 12),
-          const Divider(height: 1),
+          const Divider(height: 1, color: AppColors.border),
           const SizedBox(height: 8),
 
           Text(
             'Submitted ${AppDateUtils.formatShortDate(report.createdAt)} (${AppDateUtils.timeAgo(report.createdAt)})',
-            style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+            style: const TextStyle(fontSize: 11, color: AppColors.microLabel),
           ),
         ],
       ),
@@ -203,7 +207,11 @@ class _SubmitReportSheetState extends State<SubmitReportSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -222,23 +230,30 @@ class _SubmitReportSheetState extends State<SubmitReportSheet> {
                 children: [
                   const Text(
                     'Report a Concern',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: AppColors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
-              Text(
+              const SizedBox(height: 4),
+              const Text(
                 'Help keep Bondly safe. All reports are strictly confidential.',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 16),
 
               // Reason selection chips
-              const Text('What is the issue?', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+              const Text(
+                'What is the issue?',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textSecondary),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -249,8 +264,13 @@ class _SubmitReportSheetState extends State<SubmitReportSheet> {
                     label: Text(r),
                     selected: isSelected,
                     selectedColor: AppColors.error,
+                    backgroundColor: AppColors.surfaceElevated,
+                    side: BorderSide(
+                      color: isSelected ? AppColors.error : AppColors.border,
+                      width: 1,
+                    ),
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      color: isSelected ? Colors.white : AppColors.textSecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -265,10 +285,27 @@ class _SubmitReportSheetState extends State<SubmitReportSheet> {
               // Target User / Entity Name
               TextFormField(
                 controller: _targetNameController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: InputDecoration(
                   labelText: 'User or Group Name (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'e.g. Alex Carter',
-                  prefixIcon: Icon(Icons.person_outline_rounded),
+                  hintStyle: const TextStyle(color: AppColors.microLabel),
+                  prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -277,10 +314,27 @@ class _SubmitReportSheetState extends State<SubmitReportSheet> {
               TextFormField(
                 controller: _descController,
                 maxLines: 4,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Description of the incident *',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Please describe what happened in as much detail as possible...',
-                  prefixIcon: Icon(Icons.notes_rounded),
+                  hintStyle: const TextStyle(color: AppColors.microLabel),
+                  prefixIcon: const Icon(Icons.notes_rounded, color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+                  ),
                 ),
                 validator: (v) => v == null || v.trim().length < 5
                     ? 'Please provide a brief description (at least 5 characters)'

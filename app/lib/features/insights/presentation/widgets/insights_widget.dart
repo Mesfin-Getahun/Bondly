@@ -30,20 +30,14 @@ class HealthScoreCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.primary,
-            AppColors.primaryDark,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withAlpha(50),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
+            color: Colors.black.withAlpha(30),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -58,7 +52,11 @@ class HealthScoreCard extends StatelessWidget {
                 children: [
                   const Text(
                     'Relationship Health',
-                    style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -68,14 +66,14 @@ class HealthScoreCard extends StatelessWidget {
                       Text(
                         '$score',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontSize: 38,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const Text(
                         ' / 100',
-                        style: TextStyle(color: Colors.white60, fontSize: 16),
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
                       ),
                     ],
                   ),
@@ -84,8 +82,9 @@ class HealthScoreCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(30),
+                  color: AppColors.surfaceElevated,
                   borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border, width: 1),
                 ),
                 child: Row(
                   children: [
@@ -93,7 +92,7 @@ class HealthScoreCard extends StatelessWidget {
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: scoreColor == Colors.green ? Colors.greenAccent : Colors.orangeAccent,
+                        color: scoreColor == Colors.green ? Colors.greenAccent : (scoreColor == Colors.orange ? Colors.orangeAccent : AppColors.error),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -101,7 +100,7 @@ class HealthScoreCard extends StatelessWidget {
                     Text(
                       rating,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
@@ -112,7 +111,7 @@ class HealthScoreCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          const Divider(height: 1, color: Colors.white24),
+          const Divider(height: 1, color: AppColors.border),
           const SizedBox(height: 16),
 
           // Sub-metrics Row
@@ -162,15 +161,19 @@ class _MiniMetric extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white70, size: 18),
+        Icon(icon, color: AppColors.primary, size: 18),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
         Text(
           label,
-          style: const TextStyle(color: Colors.white60, fontSize: 10),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
         ),
       ],
     );
@@ -192,18 +195,29 @@ class CategoryBalanceCard extends StatelessWidget {
     final total = distribution.values.fold(0, (a, b) => a + b);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(20),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             'Circle Balance',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -212,23 +226,31 @@ class CategoryBalanceCard extends StatelessWidget {
             children: distribution.entries.map((entry) {
               final pct = total > 0 ? (entry.value / total * 100).round() : 0;
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: AppColors.surfaceElevated,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.border, width: 1),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       entry.key,
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       '${entry.value} ($pct%)',
-                      style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -262,12 +284,12 @@ class InsightRecommendationCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: typeColor.withAlpha(40)),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(4),
+            color: Colors.black.withAlpha(20),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -291,18 +313,26 @@ class InsightRecommendationCard extends StatelessWidget {
                   children: [
                     Text(
                       insight.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 4),
                     Text(
                       insight.summary,
-                      style: TextStyle(fontSize: 12.5, color: Colors.grey.shade700, height: 1.3),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                        height: 1.35,
+                      ),
                     ),
                   ],
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.close, size: 16, color: Colors.grey),
+                icon: const Icon(Icons.close, size: 16, color: AppColors.textTertiary),
                 onPressed: onDismiss,
               ),
             ],
@@ -315,10 +345,10 @@ class InsightRecommendationCard extends StatelessWidget {
               icon: const Icon(Icons.touch_app_rounded, size: 16),
               label: Text(insight.actionLabel),
               style: ElevatedButton.styleFrom(
-                backgroundColor: typeColor,
+                backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               ),
             ),

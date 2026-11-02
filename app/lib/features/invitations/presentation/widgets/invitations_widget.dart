@@ -50,14 +50,15 @@ class InvitationTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: invitation.isPending ? AppColors.primary.withAlpha(60) : Colors.grey.shade200,
+          color: invitation.isPending ? AppColors.primary.withAlpha(70) : AppColors.border,
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(8),
+            color: Colors.black.withAlpha(25),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -73,12 +74,12 @@ class InvitationTile extends StatelessWidget {
               // Invitation Code Box
               InkWell(
                 onTap: () => _copyToClipboard(context, invitation.code, 'Code'),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withAlpha(20),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.surfaceElevated,
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppColors.primary.withAlpha(80)),
                   ),
                   child: Row(
@@ -93,7 +94,7 @@ class InvitationTile extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                           letterSpacing: 1.2,
-                          color: AppColors.primaryDark,
+                          color: AppColors.primary,
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -129,17 +130,18 @@ class InvitationTile extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(6),
+                  color: AppColors.surfaceElevated,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.border),
                 ),
                 child: Text(
                   invitation.relationshipType,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade700,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ),
@@ -147,7 +149,11 @@ class InvitationTile extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'for ${invitation.inviteeName}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ],
             ],
@@ -157,16 +163,16 @@ class InvitationTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               '"${invitation.personalNote}"',
-              style: TextStyle(
+              style: const TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 12.5,
-                color: Colors.grey.shade600,
+                color: AppColors.textSecondary,
               ),
             ),
           ],
 
           const SizedBox(height: 12),
-          const Divider(height: 1),
+          const Divider(height: 1, color: AppColors.border),
           const SizedBox(height: 10),
 
           // Bottom Row: Expiration / Claimed Details + Action Buttons
@@ -183,23 +189,23 @@ class InvitationTile extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: Colors.green,
+                          color: Colors.greenAccent,
                         ),
                       ),
                       if (invitation.claimedAt != null)
                         Text(
                           AppDateUtils.timeAgo(invitation.claimedAt!),
-                          style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                          style: const TextStyle(fontSize: 11, color: AppColors.microLabel),
                         ),
                     ] else if (invitation.isPending) ...[
                       Text(
                         'Expires: ${AppDateUtils.formatShortDate(invitation.expiresAt)}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                       ),
                     ] else ...[
                       Text(
                         'Created: ${AppDateUtils.formatShortDate(invitation.createdAt)}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                        style: const TextStyle(fontSize: 12, color: AppColors.microLabel),
                       ),
                     ],
                   ],
@@ -307,7 +313,11 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -326,25 +336,29 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
                 children: [
                   const Text(
                     'Generate Private Invite',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: AppColors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
+              const Text(
                 'Generate a private code or link to invite someone to connect on Bondly.',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 16),
 
               // Relationship Type Chips
               const Text(
                 'Relationship Type',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -355,8 +369,13 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
                     label: Text(rel),
                     selected: isSelected,
                     selectedColor: AppColors.primary,
+                    backgroundColor: AppColors.surfaceElevated,
+                    side: BorderSide(
+                      color: isSelected ? AppColors.primary : AppColors.border,
+                      width: 1,
+                    ),
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      color: isSelected ? Colors.white : AppColors.textSecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -371,10 +390,27 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
               // Optional Invitee Name
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Invitee Name (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'e.g. Sarah Jenkins',
-                  prefixIcon: Icon(Icons.person_outline_rounded),
+                  hintStyle: const TextStyle(color: AppColors.microLabel),
+                  prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -383,10 +419,27 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Invitee Email (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'sarah@example.com',
-                  prefixIcon: Icon(Icons.email_outlined),
+                  hintStyle: const TextStyle(color: AppColors.microLabel),
+                  prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -394,14 +447,34 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
               // Validity selector
               DropdownButtonFormField<int>(
                 initialValue: _validityDays,
-                decoration: const InputDecoration(
+                dropdownColor: AppColors.surfaceElevated,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Code Validity Period',
-                  prefixIcon: Icon(Icons.timer_outlined),
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
+                  prefixIcon: const Icon(Icons.timer_outlined, color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
                 items: _validityOptions
                     .map((opt) => DropdownMenuItem(
                           value: opt['days'] as int,
-                          child: Text(opt['label'] as String),
+                          child: Text(
+                            opt['label'] as String,
+                            style: const TextStyle(color: AppColors.textPrimary),
+                          ),
                         ))
                     .toList(),
                 onChanged: (v) {
@@ -414,10 +487,27 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
               TextFormField(
                 controller: _noteController,
                 maxLines: 2,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Personal Welcome Note (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'Hey! Join me on Bondly so we can stay in touch.',
-                  prefixIcon: Icon(Icons.message_outlined),
+                  hintStyle: const TextStyle(color: AppColors.microLabel),
+                  prefixIcon: const Icon(Icons.message_outlined, color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -522,7 +612,11 @@ class _RedeemInvitationSheetState extends State<RedeemInvitationSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -541,18 +635,22 @@ class _RedeemInvitationSheetState extends State<RedeemInvitationSheet> {
                 children: [
                   const Text(
                     'Redeem Invitation Code',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: AppColors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
               const SizedBox(height: 6),
-              Text(
+              const Text(
                 'Enter a 5-digit Bondly invitation code or link to connect immediately.',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 18),
 
@@ -565,11 +663,28 @@ class _RedeemInvitationSheetState extends State<RedeemInvitationSheet> {
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,
+                  color: AppColors.primary,
                 ),
                 decoration: InputDecoration(
                   labelText: 'Invitation Code',
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'BOND-XXXXX',
-                  prefixIcon: const Icon(Icons.qr_code_rounded),
+                  hintStyle: const TextStyle(color: AppColors.microLabel),
+                  prefixIcon: const Icon(Icons.qr_code_rounded, color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                   suffixIcon: IconButton(
                     tooltip: 'Paste from clipboard',
                     icon: const Icon(Icons.content_paste_rounded, color: AppColors.primary),
@@ -589,18 +704,18 @@ class _RedeemInvitationSheetState extends State<RedeemInvitationSheet> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.blue.shade200),
+                  color: AppColors.privacySurface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.privacyBorder),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    Icon(Icons.info_outline_rounded, color: Colors.blue.shade700, size: 20),
-                    const SizedBox(width: 10),
+                    Icon(Icons.lock_outline_rounded, color: AppColors.privacyAccent, size: 20),
+                    SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Redeeming connects you with the inviter so you can message each other directly.',
-                        style: TextStyle(fontSize: 12, color: Colors.blue.shade900),
+                        'Redeeming connects you with the inviter so you can message each other directly and privately.',
+                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                       ),
                     ),
                   ],

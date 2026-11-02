@@ -71,6 +71,17 @@ class MessagingController extends ChangeNotifier {
     return count;
   }
 
+  Future<ConversationEntity?> startConversation({
+    required String otherUserId,
+    String? currentUserName,
+    String? otherUserName,
+  }) =>
+      openOrCreateChat(
+        otherUserId: otherUserId,
+        currentUserName: currentUserName,
+        otherUserName: otherUserName,
+      );
+
   Future<ConversationEntity?> openOrCreateChat({
     required String otherUserId,
     String? currentUserName,

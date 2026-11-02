@@ -110,7 +110,16 @@ class _ConnectionsPageState extends State<ConnectionsPage> with SingleTickerProv
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Connections', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        titleTextStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        title: const Text('Connections'),
         actions: [
           IconButton(
             tooltip: 'Invite Codes',
@@ -134,8 +143,9 @@ class _ConnectionsPageState extends State<ConnectionsPage> with SingleTickerProv
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,
-          unselectedLabelColor: Colors.grey,
+          unselectedLabelColor: AppColors.textSecondary,
           indicatorColor: AppColors.primary,
+          dividerColor: AppColors.border,
           tabs: [
             const Tab(text: 'Friends'),
             ListenableBuilder(
@@ -187,20 +197,22 @@ class _ConnectionsPageState extends State<ConnectionsPage> with SingleTickerProv
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: TextField(
                       controller: _searchController,
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                       onChanged: _controller.setSearchQuery,
                       decoration: InputDecoration(
                         hintText: 'Search friends...',
+                        hintStyle: const TextStyle(color: AppColors.textTertiary, fontSize: 13),
                         prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary),
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: AppColors.surface,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide(color: Colors.grey.shade200),
+                          borderSide: const BorderSide(color: AppColors.border, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                         ),
                       ),
                     ),

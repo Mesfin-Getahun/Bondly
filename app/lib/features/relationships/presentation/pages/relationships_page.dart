@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_utils.dart';
+import '../../../dashboard/presentation/widgets/dashboard_widget.dart';
 import '../../domain/entities/relationships_entity.dart';
 import '../controllers/relationships_controller.dart';
 import '../widgets/relationships_widget.dart';
@@ -9,6 +10,7 @@ import '../widgets/relationships_widget.dart';
 ///
 /// CRITICAL PRIVACY REQUIREMENT:
 /// All data shown on this page belongs strictly to the authenticated user.
+/// Adheres strictly to AGENTS.md dark modern styling and privacy standards.
 class RelationshipsPage extends StatefulWidget {
   final String? userId;
   final RelationshipsController? controller;
@@ -55,9 +57,7 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) => AddEditRelationshipSheet(
         controller: _controller,
         existing: existing,
@@ -69,9 +69,7 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) => LogInteractionSheet(
         controller: _controller,
         relationship: relationship,
@@ -83,9 +81,7 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) => _RelationshipDetailSheet(
         relationship: relationship,
         controller: _controller,
@@ -106,13 +102,26 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Relationships', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        title: const Text(
+          'Relationships',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+        ),
         actions: [
           IconButton(
             tooltip: 'Add Contact',
-            icon: const Icon(Icons.person_add_alt_1_rounded),
+            icon: const Icon(Icons.person_add_alt_1_rounded, color: AppColors.textPrimary),
             onPressed: () => _showAddSheet(),
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: ListenableBuilder(
@@ -123,18 +132,26 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
 
           return Column(
             children: [
+              // AGENTS.md Rule 4: Privacy Status Component for confidential records
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: PrivacyStatusBanner(),
+              ),
+
               // Search & Filter Header
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: TextField(
                   controller: _searchController,
+                  style: const TextStyle(color: AppColors.textPrimary),
                   onChanged: _controller.setSearchQuery,
                   decoration: InputDecoration(
                     hintText: 'Search by name, nickname, or tags...',
-                    prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary),
+                    hintStyle: const TextStyle(color: AppColors.microLabel, fontSize: 13),
+                    prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, size: 18),
+                            icon: const Icon(Icons.clear, size: 18, color: AppColors.textSecondary),
                             onPressed: () {
                               _searchController.clear();
                               _controller.setSearchQuery('');
@@ -142,15 +159,19 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
                           )
                         : null,
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: AppColors.surface,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderSide: const BorderSide(color: AppColors.border, width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.grey.shade200),
+                      borderSide: const BorderSide(color: AppColors.border, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                     ),
                   ),
                 ),
@@ -158,7 +179,7 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
 
               // Filter Chips
               SizedBox(
-                height: 44,
+                height: 42,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -167,13 +188,18 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
                     if (dueCount > 0) ...[
                       FilterChip(
                         selected: _controller.filterDueOnly,
-                        avatar: const Icon(Icons.warning_amber_rounded, size: 16, color: Colors.white),
+                        avatar: const Icon(Icons.warning_amber_rounded, size: 15, color: Colors.white),
                         label: Text('Due ($dueCount)'),
                         selectedColor: AppColors.error,
-                        backgroundColor: AppColors.error.withAlpha(20),
+                        backgroundColor: AppColors.error.withValues(alpha: 0.15),
+                        side: BorderSide(
+                          color: _controller.filterDueOnly ? AppColors.error : AppColors.error.withValues(alpha: 0.4),
+                          width: 1,
+                        ),
                         labelStyle: TextStyle(
                           color: _controller.filterDueOnly ? Colors.white : AppColors.error,
                           fontWeight: FontWeight.bold,
+                          fontSize: 12,
                         ),
                         onSelected: (_) => _controller.toggleFilterDueOnly(),
                       ),
@@ -188,9 +214,15 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
                           selected: isSelected,
                           label: Text(cat),
                           selectedColor: AppColors.primary,
+                          backgroundColor: AppColors.surface,
+                          side: BorderSide(
+                            color: isSelected ? AppColors.primary : AppColors.border,
+                            width: 1,
+                          ),
                           labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : AppColors.textPrimary,
+                            color: isSelected ? Colors.white : AppColors.textSecondary,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontSize: 12,
                           ),
                           onSelected: (val) {
                             if (val) _controller.setSelectedType(cat);
@@ -206,11 +238,11 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
               // Contacts List or Empty State
               Expanded(
                 child: _controller.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
                     : list.isEmpty
                         ? _EmptyRelationshipsView(onAddContact: () => _showAddSheet())
                         : ListView.builder(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             itemCount: list.length,
                             itemBuilder: (context, index) {
                               final rel = list[index];
@@ -229,6 +261,7 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        elevation: 4,
         onPressed: () => _showAddSheet(),
         icon: const Icon(Icons.person_add_rounded),
         label: const Text('Add Contact', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -237,7 +270,7 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
   }
 }
 
-/// Empty state display
+/// Empty state display in Dark Modern Theme
 class _EmptyRelationshipsView extends StatelessWidget {
   final VoidCallback onAddContact;
 
@@ -252,15 +285,16 @@ class _EmptyRelationshipsView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 76,
+              height: 76,
               decoration: BoxDecoration(
-                color: AppColors.primary.withAlpha(20),
+                color: AppColors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.25), width: 1),
               ),
               child: const Icon(
                 Icons.people_outline_rounded,
-                size: 44,
+                size: 38,
                 color: AppColors.primary,
               ),
             ),
@@ -281,10 +315,11 @@ class _EmptyRelationshipsView extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.add_rounded),
               label: const Text('Add First Contact', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
@@ -294,7 +329,7 @@ class _EmptyRelationshipsView extends StatelessWidget {
   }
 }
 
-/// Detailed bottom sheet for a contact (Interactions + Notes)
+/// Detailed bottom sheet for a contact (Interactions + Notes) in Dark Modern Theme
 class _RelationshipDetailSheet extends StatefulWidget {
   final RelationshipEntity relationship;
   final RelationshipsController controller;
@@ -352,8 +387,9 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
       builder: (context, scrollController) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColors.surface,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border(top: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: Column(
             children: [
@@ -363,7 +399,7 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: AppColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -374,12 +410,12 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 28,
-                      backgroundColor: AppColors.primary.withAlpha(25),
+                      radius: 26,
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.15),
                       child: Text(
                         rel.name.isNotEmpty ? rel.name[0].toUpperCase() : '?',
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
                         ),
@@ -392,19 +428,30 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                         children: [
                           Text(
                             rel.name,
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
                           if (rel.nickname != null)
-                            Text('"${rel.nickname}"', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                            Text(
+                              '"${rel.nickname}"',
+                              style: const TextStyle(color: AppColors.microLabel, fontSize: 13),
+                            ),
                           Text(
                             rel.relationshipType,
-                            style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 12),
+                            style: const TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.edit_outlined),
+                      icon: const Icon(Icons.edit_outlined, color: AppColors.textSecondary),
                       onPressed: widget.onEdit,
                       tooltip: 'Edit Contact',
                     ),
@@ -416,12 +463,26 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                         final confirm = await showDialog<bool>(
                           context: context,
                           builder: (ctx) => AlertDialog(
-                            title: const Text('Delete Contact'),
-                            content: Text('Are you sure you want to delete ${rel.name}?'),
+                            backgroundColor: AppColors.surface,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              side: const BorderSide(color: AppColors.border, width: 1),
+                            ),
+                            title: const Text('Delete Contact', style: TextStyle(color: AppColors.textPrimary)),
+                            content: Text(
+                              'Are you sure you want to delete ${rel.name}?',
+                              style: const TextStyle(color: AppColors.textSecondary),
+                            ),
                             actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+                              ),
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.error,
+                                  elevation: 0,
+                                ),
                                 onPressed: () => Navigator.pop(ctx, true),
                                 child: const Text('Delete', style: TextStyle(color: Colors.white)),
                               ),
@@ -437,14 +498,15 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                   ],
                 ),
               ),
-              const Divider(),
+              const Divider(color: AppColors.border, height: 1),
 
               // Tabs
               TabBar(
                 controller: _tabController,
                 labelColor: AppColors.primary,
-                unselectedLabelColor: Colors.grey,
+                unselectedLabelColor: AppColors.microLabel,
                 indicatorColor: AppColors.primary,
+                indicatorSize: TabBarIndicatorSize.tab,
                 tabs: const [
                   Tab(icon: Icon(Icons.history_rounded, size: 20), text: 'Interactions'),
                   Tab(icon: Icon(Icons.note_alt_outlined, size: 20), text: 'Private Notes'),
@@ -462,17 +524,25 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                       builder: (context, snapshot) {
                         final interactions = snapshot.data ?? [];
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(child: CircularProgressIndicator(color: AppColors.primary));
                         }
                         if (interactions.isEmpty) {
                           return Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text('No interactions recorded yet.', style: TextStyle(color: Colors.grey)),
+                                const Text(
+                                  'No interactions recorded yet.',
+                                  style: TextStyle(color: AppColors.textSecondary),
+                                ),
                                 const SizedBox(height: 12),
                                 ElevatedButton.icon(
                                   onPressed: widget.onLogInteraction,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
                                   icon: const Icon(Icons.add),
                                   label: const Text('Log First Interaction'),
                                 ),
@@ -483,18 +553,29 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                         return ListView.separated(
                           padding: const EdgeInsets.all(16),
                           itemCount: interactions.length,
-                          separatorBuilder: (_, _) => const Divider(height: 1),
+                          separatorBuilder: (_, _) => const Divider(color: AppColors.border, height: 1),
                           itemBuilder: (context, idx) {
                             final item = interactions[idx];
                             return ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: AppColors.primary.withAlpha(20),
-                                child: const Icon(Icons.chat_bubble_outline, color: AppColors.primary, size: 18),
+                              leading: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.chat_bubble_outline_rounded, color: AppColors.primary, size: 18),
                               ),
-                              title: Text(item.summary, style: const TextStyle(fontWeight: FontWeight.w600)),
-                              subtitle: Text(AppDateUtils.formatShortDate(item.date)),
+                              title: Text(
+                                item.summary,
+                                style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                              ),
+                              subtitle: Text(
+                                AppDateUtils.formatShortDate(item.date),
+                                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                              ),
                               trailing: IconButton(
-                                icon: const Icon(Icons.delete_outline, size: 18, color: Colors.grey),
+                                icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.microLabel),
                                 onPressed: () => widget.controller.deleteInteraction(rel.id, item.id),
                               ),
                             );
@@ -512,11 +593,14 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                             builder: (context, snapshot) {
                               final notes = snapshot.data ?? [];
                               if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                                return const Center(child: CircularProgressIndicator(color: AppColors.primary));
                               }
                               if (notes.isEmpty) {
                                 return const Center(
-                                  child: Text('No private notes yet. Add your thoughts below.', style: TextStyle(color: Colors.grey)),
+                                  child: Text(
+                                    'No private notes yet. Add your thoughts below.',
+                                    style: TextStyle(color: AppColors.textSecondary),
+                                  ),
                                 );
                               }
                               return ListView.separated(
@@ -528,9 +612,9 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                                   return Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: Colors.amber.shade50,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: Colors.amber.shade200),
+                                      color: AppColors.surfaceElevated,
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(color: AppColors.border, width: 1),
                                     ),
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -539,17 +623,20 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(note.content, style: const TextStyle(fontSize: 14)),
+                                              Text(
+                                                note.content,
+                                                style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+                                              ),
                                               const SizedBox(height: 4),
                                               Text(
                                                 AppDateUtils.formatShortDate(note.createdAt),
-                                                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                                                style: const TextStyle(fontSize: 11, color: AppColors.microLabel),
                                               ),
                                             ],
                                           ),
                                         ),
                                         IconButton(
-                                          icon: const Icon(Icons.close, size: 16, color: Colors.grey),
+                                          icon: const Icon(Icons.close_rounded, size: 16, color: AppColors.textSecondary),
                                           onPressed: () => widget.controller.deleteNote(rel.id, note.id),
                                         ),
                                       ],
@@ -564,17 +651,19 @@ class _RelationshipDetailSheetState extends State<_RelationshipDetailSheet>
                         // Add Note Bar
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
-                            border: Border(top: BorderSide(color: Colors.grey.shade200)),
+                          decoration: const BoxDecoration(
+                            color: AppColors.surfaceElevated,
+                            border: Border(top: BorderSide(color: AppColors.border, width: 1)),
                           ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: TextField(
                                   controller: _noteController,
+                                  style: const TextStyle(color: AppColors.textPrimary),
                                   decoration: const InputDecoration(
                                     hintText: 'Add a private note...',
+                                    hintStyle: TextStyle(color: AppColors.microLabel),
                                     border: InputBorder.none,
                                   ),
                                 ),
