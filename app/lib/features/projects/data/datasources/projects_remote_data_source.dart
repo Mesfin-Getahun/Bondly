@@ -32,6 +32,50 @@ abstract class ProjectsRemoteDataSource {
 class FirestoreProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
   final FirebaseFirestore _firestore;
 
+  static final List<ProjectModel> _guestDemoProjects = [
+    ProjectModel(
+      id: 'demo_proj_1',
+      title: 'Weekend Camping Trip',
+      description: 'Planning a group camping getaway to Redwood National Park.',
+      creatorId: 'guest_demo_user',
+      creatorName: 'Alex Morgan',
+      participantIds: const ['guest_demo_user', 'sarah_jenkins'],
+      participantNames: const {
+        'guest_demo_user': 'Alex Morgan',
+        'sarah_jenkins': 'Sarah Jenkins',
+      },
+      category: 'Adventure',
+      status: 'active',
+      dueDate: DateTime.now().add(const Duration(days: 21)),
+      tasks: const [
+        ProjectTaskModel(
+          id: 'task_1',
+          title: 'Reserve campsite spots',
+          isCompleted: true,
+          assigneeId: 'guest_demo_user',
+          assigneeName: 'Alex Morgan',
+        ),
+        ProjectTaskModel(
+          id: 'task_2',
+          title: 'Pack tents and cooking gear',
+          isCompleted: false,
+          assigneeId: 'sarah_jenkins',
+          assigneeName: 'Sarah Jenkins',
+        ),
+      ],
+      milestones: [
+        ProjectMilestoneModel(
+          id: 'ms_1',
+          title: 'Gear & itinerary locked',
+          targetDate: DateTime.now().add(const Duration(days: 7)),
+          isReached: false,
+        ),
+      ],
+      createdAt: DateTime.now().subtract(const Duration(days: 14)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+  ];
+
   FirestoreProjectsRemoteDataSourceImpl({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
@@ -41,6 +85,9 @@ class FirestoreProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource 
   @override
   Stream<List<ProjectModel>> watchUserProjects(String userId) {
     if (userId.isEmpty) return Stream.value([]);
+    if (userId == 'guest_demo_user') {
+      return Stream.value(_guestDemoProjects);
+    }
 
     return _projectsRef
         .where('participantIds', arrayContains: userId)

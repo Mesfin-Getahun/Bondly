@@ -22,6 +22,18 @@ abstract class NotificationsRemoteDataSource {
 class FirestoreNotificationsRemoteDataSourceImpl implements NotificationsRemoteDataSource {
   final FirebaseFirestore _firestore;
 
+  static final List<NotificationModel> _guestDemoNotifications = [
+    NotificationModel(
+      id: 'demo_notif_1',
+      recipientId: 'guest_demo_user',
+      title: 'Welcome to Bondly!',
+      body: 'Explore your relationships, private notes, cadence follow-ups, and AI insights.',
+      type: 'welcome',
+      isRead: false,
+      createdAt: DateTime.now().subtract(const Duration(minutes: 10)),
+    ),
+  ];
+
   FirestoreNotificationsRemoteDataSourceImpl({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
@@ -31,6 +43,9 @@ class FirestoreNotificationsRemoteDataSourceImpl implements NotificationsRemoteD
   @override
   Stream<List<NotificationModel>> watchNotifications(String userId) {
     if (userId.isEmpty) return Stream.value([]);
+    if (userId == 'guest_demo_user') {
+      return Stream.value(_guestDemoNotifications);
+    }
 
     return _notificationsRef
         .where('recipientId', isEqualTo: userId)

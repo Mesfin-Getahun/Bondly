@@ -31,6 +31,29 @@ class FirestoreInsightsRemoteDataSourceImpl implements InsightsRemoteDataSource 
   @override
   Stream<List<InsightModel>> watchInsights(String userId) {
     if (userId.isEmpty) return Stream.value([]);
+    if (userId == 'guest_demo_user') {
+      return Stream.value([
+        InsightModel(
+          id: 'demo_ins_1',
+          userId: 'guest_demo_user',
+          title: 'Cadence Reminder',
+          summary: 'Sarah Jenkins is 2 days past your weekly cadence. A quick message keeps the bond strong!',
+          actionLabel: 'Message Sarah',
+          type: InsightType.cadence,
+          targetRelationshipId: 'demo_rel_1',
+          createdAt: DateTime.now().subtract(const Duration(hours: 4)),
+        ),
+        InsightModel(
+          id: 'demo_ins_2',
+          userId: 'guest_demo_user',
+          title: 'Strong Network Balance',
+          summary: 'Great job maintaining regular touchpoints across Friends, Mentors, and Colleagues.',
+          actionLabel: 'View Health Score',
+          type: InsightType.tip,
+          createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        ),
+      ]);
+    }
 
     return _insightsRef(userId)
         .where('isDismissed', isEqualTo: false)
@@ -46,6 +69,16 @@ class FirestoreInsightsRemoteDataSourceImpl implements InsightsRemoteDataSource 
   Future<RelationshipHealthSummary> computeHealthSummary(String userId) async {
     try {
       if (userId.isEmpty) return const RelationshipHealthSummary();
+      if (userId == 'guest_demo_user') {
+        return const RelationshipHealthSummary(
+          overallScore: 88,
+          totalRelationships: 3,
+          healthyCadenceCount: 2,
+          overdueCadenceCount: 1,
+          streakDays: 5,
+          categoryDistribution: {'Bestie': 1, 'Mentor': 1, 'Colleague': 1},
+        );
+      }
 
       final relationshipsSnap = await _relationshipsRef(userId).get();
       final total = relationshipsSnap.docs.length;
@@ -103,7 +136,7 @@ class FirestoreInsightsRemoteDataSourceImpl implements InsightsRemoteDataSource 
   @override
   Future<void> generateSmartInsights(String userId) async {
     try {
-      if (userId.isEmpty) return;
+      if (userId.isEmpty || userId == 'guest_demo_user') return;
 
       final relationshipsSnap = await _relationshipsRef(userId).get();
       final now = DateTime.now();
@@ -144,6 +177,7 @@ class FirestoreInsightsRemoteDataSourceImpl implements InsightsRemoteDataSource 
 
   @override
   Future<void> dismissInsight(String userId, String insightId) async {
+    if (userId == 'guest_demo_user') return;
     try {
       await _insightsRef(userId).doc(insightId).update({'isDismissed': true});
     } catch (e) {

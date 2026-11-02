@@ -81,6 +81,21 @@ class FirestoreInvitationsRemoteDataSourceImpl implements InvitationsRemoteDataS
   @override
   Stream<List<InvitationModel>> watchSentInvitations(String senderId) {
     if (senderId.isEmpty) return Stream.value([]);
+    if (senderId == 'guest_demo_user') {
+      return Stream.value([
+        InvitationModel(
+          id: 'demo_inv_1',
+          code: 'BOND-GUEST',
+          senderId: 'guest_demo_user',
+          senderName: 'Alex Morgan',
+          relationshipType: 'Friend',
+          personalNote: 'Join me on Bondly!',
+          status: 'pending',
+          createdAt: DateTime.now().subtract(const Duration(days: 2)),
+          expiresAt: DateTime.now().add(const Duration(days: 12)),
+        ),
+      ]);
+    }
 
     return _invitationsRef
         .where('senderId', isEqualTo: senderId)

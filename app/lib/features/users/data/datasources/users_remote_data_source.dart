@@ -21,6 +21,19 @@ abstract class UsersRemoteDataSource {
 class FirestoreUsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   final FirebaseFirestore _firestore;
 
+  static UserProfileModel _guestDemoProfile = UserProfileModel(
+    id: 'guest_demo_user',
+    email: 'guest@bondly.app',
+    displayName: 'Alex Morgan',
+    bio: 'Product builder, coffee enthusiast, and lifelong learner.',
+    defaultCadenceDays: 14,
+    pushNotifications: true,
+    emailNotifications: true,
+    isPrivate: false,
+    createdAt: DateTime.now().subtract(const Duration(days: 30)),
+    updatedAt: DateTime.now(),
+  );
+
   FirestoreUsersRemoteDataSourceImpl({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
@@ -29,6 +42,9 @@ class FirestoreUsersRemoteDataSourceImpl implements UsersRemoteDataSource {
 
   @override
   Future<UserProfileModel?> getUserProfile(String userId) async {
+    if (userId == 'guest_demo_user') {
+      return _guestDemoProfile;
+    }
     try {
       final doc = await _usersRef.doc(userId).get();
       if (!doc.exists) return null;
@@ -41,6 +57,9 @@ class FirestoreUsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   @override
   Stream<UserProfileModel?> watchUserProfile(String userId) {
     if (userId.isEmpty) return Stream.value(null);
+    if (userId == 'guest_demo_user') {
+      return Stream.value(_guestDemoProfile);
+    }
 
     return _usersRef.doc(userId).snapshots().map((doc) {
       if (!doc.exists) return null;
@@ -50,6 +69,10 @@ class FirestoreUsersRemoteDataSourceImpl implements UsersRemoteDataSource {
 
   @override
   Future<void> updateUserProfile(UserProfileModel profile) async {
+    if (profile.id == 'guest_demo_user') {
+      _guestDemoProfile = profile;
+      return;
+    }
     try {
       final data = profile.toFirestore()..['updatedAt'] = FieldValue.serverTimestamp();
       await _usersRef.doc(profile.id).set(data, SetOptions(merge: true));
@@ -66,6 +89,23 @@ class FirestoreUsersRemoteDataSourceImpl implements UsersRemoteDataSource {
     bool? emailNotifications,
     bool? isPrivate,
   }) async {
+    if (userId == 'guest_demo_user') {
+      _guestDemoProfile = UserProfileModel(
+        id: _guestDemoProfile.id,
+        email: _guestDemoProfile.email,
+        displayName: _guestDemoProfile.displayName,
+        photoUrl: _guestDemoProfile.photoUrl,
+        bio: _guestDemoProfile.bio,
+        phoneNumber: _guestDemoProfile.phoneNumber,
+        defaultCadenceDays: defaultCadenceDays ?? _guestDemoProfile.defaultCadenceDays,
+        pushNotifications: pushNotifications ?? _guestDemoProfile.pushNotifications,
+        emailNotifications: emailNotifications ?? _guestDemoProfile.emailNotifications,
+        isPrivate: isPrivate ?? _guestDemoProfile.isPrivate,
+        createdAt: _guestDemoProfile.createdAt,
+        updatedAt: DateTime.now(),
+      );
+      return;
+    }
     try {
       final Map<String, dynamic> updates = {
         'updatedAt': FieldValue.serverTimestamp(),

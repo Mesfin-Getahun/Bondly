@@ -32,6 +32,20 @@ class FirestoreConnectionsRemoteDataSourceImpl implements ConnectionsRemoteDataS
   @override
   Stream<List<ConnectionModel>> watchConnections(String currentUserId) {
     if (currentUserId.isEmpty) return Stream.value([]);
+    if (currentUserId == 'guest_demo_user') {
+      return Stream.value([
+        ConnectionModel(
+          id: 'demo_conn_1',
+          userA: 'guest_demo_user',
+          userB: 'sarah_jenkins',
+          userAName: 'Alex Morgan',
+          userBName: 'Sarah Jenkins',
+          status: ConnectionStatus.accepted,
+          createdAt: DateTime.now().subtract(const Duration(days: 20)),
+          updatedAt: DateTime.now().subtract(const Duration(days: 20)),
+        ),
+      ]);
+    }
 
     late StreamController<List<ConnectionModel>> controller;
     StreamSubscription? subA;

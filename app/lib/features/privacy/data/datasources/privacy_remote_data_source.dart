@@ -32,6 +32,15 @@ class FirestorePrivacyRemoteDataSourceImpl implements PrivacyRemoteDataSource {
     if (userId.isEmpty) {
       return Stream.value(PrivacySettingsModel(userId: '', updatedAt: DateTime.now()));
     }
+    if (userId == 'guest_demo_user') {
+      return Stream.value(PrivacySettingsModel(
+        userId: 'guest_demo_user',
+        analyticsConsent: true,
+        personalizedRecommendations: true,
+        searchVisibility: false,
+        updatedAt: DateTime.now(),
+      ));
+    }
 
     return _privacyDoc(userId).snapshots().map((doc) {
       if (!doc.exists) {

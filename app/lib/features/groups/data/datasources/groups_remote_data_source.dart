@@ -32,6 +32,34 @@ abstract class GroupsRemoteDataSource {
 class FirestoreGroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   final FirebaseFirestore _firestore;
 
+  static final List<GroupModel> _guestDemoGroups = [
+    GroupModel(
+      id: 'demo_grp_1',
+      name: 'Inner Circle',
+      description: 'Close friends & weekend hangouts',
+      creatorId: 'guest_demo_user',
+      creatorName: 'Alex Morgan',
+      category: 'Friends',
+      memberIds: const ['guest_demo_user', 'sarah_jenkins'],
+      members: [
+        GroupMemberModel(
+          userId: 'guest_demo_user',
+          displayName: 'Alex Morgan',
+          role: GroupRole.admin,
+          joinedAt: DateTime.now().subtract(const Duration(days: 30)),
+        ),
+        GroupMemberModel(
+          userId: 'sarah_jenkins',
+          displayName: 'Sarah Jenkins',
+          role: GroupRole.member,
+          joinedAt: DateTime.now().subtract(const Duration(days: 20)),
+        ),
+      ],
+      createdAt: DateTime.now().subtract(const Duration(days: 30)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+  ];
+
   FirestoreGroupsRemoteDataSourceImpl({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
@@ -41,6 +69,9 @@ class FirestoreGroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   @override
   Stream<List<GroupModel>> watchUserGroups(String userId) {
     if (userId.isEmpty) return Stream.value([]);
+    if (userId == 'guest_demo_user') {
+      return Stream.value(_guestDemoGroups);
+    }
 
     return _groupsRef
         .where('memberIds', arrayContains: userId)

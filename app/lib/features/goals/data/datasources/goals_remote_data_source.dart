@@ -29,6 +29,26 @@ abstract class GoalsRemoteDataSource {
 class FirestoreGoalsRemoteDataSourceImpl implements GoalsRemoteDataSource {
   final FirebaseFirestore _firestore;
 
+  static final List<GoalModel> _guestDemoGoals = [
+    GoalModel(
+      id: 'demo_goal_1',
+      title: 'Weekly Catchups with Friends',
+      description: 'Nurture connections by catching up at least once a week.',
+      creatorId: 'guest_demo_user',
+      creatorName: 'Alex Morgan',
+      isShared: false,
+      participantIds: const ['guest_demo_user'],
+      targetCount: 4,
+      currentCount: 3,
+      unit: 'catchups',
+      category: 'Friendship',
+      deadline: DateTime.now().add(const Duration(days: 7)),
+      isCompleted: false,
+      createdAt: DateTime.now().subtract(const Duration(days: 20)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 1)),
+    ),
+  ];
+
   FirestoreGoalsRemoteDataSourceImpl({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
@@ -38,6 +58,9 @@ class FirestoreGoalsRemoteDataSourceImpl implements GoalsRemoteDataSource {
   @override
   Stream<List<GoalModel>> watchUserGoals(String userId) {
     if (userId.isEmpty) return Stream.value([]);
+    if (userId == 'guest_demo_user') {
+      return Stream.value(_guestDemoGoals);
+    }
 
     return _goalsRef
         .where('participantIds', arrayContains: userId)
