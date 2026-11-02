@@ -18,6 +18,23 @@
 
   <title>Bondly - Meaningful Connections</title>
   <link rel="manifest" href="manifest.json">
+  <script>
+    // Force immediate purge of stale service worker and caches
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (let name of names) {
+          caches.delete(name);
+        }
+      });
+    }
+  </script>
 </head>
 <body style="background-color: #0A0D14;">
   <script src="flutter_bootstrap.js" async></script>
