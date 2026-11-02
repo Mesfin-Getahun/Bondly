@@ -13,14 +13,11 @@ export const onGoalCompleted = functions.firestore
     const after = change.after.data();
 
     if (!before.isCompleted && after.isCompleted && after.ownerId) {
-      const notifRef = db
-        .collection(COLLECTIONS.USERS)
-        .doc(after.ownerId)
-        .collection(COLLECTIONS.NOTIFICATIONS)
-        .doc();
+      const notifRef = db.collection(COLLECTIONS.NOTIFICATIONS).doc();
 
       await notifRef.set({
         id: notifRef.id,
+        recipientId: after.ownerId,
         title: 'Goal Achieved! 🎯',
         body: `Congratulations! You marked "${after.title}" as complete.`,
         type: 'goal_completed',

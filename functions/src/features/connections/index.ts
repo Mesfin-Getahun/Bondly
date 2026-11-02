@@ -12,14 +12,11 @@ export const onConnectionCreated = functions.firestore
     const conn = snap.data();
     if (!conn.recipientId) return;
 
-    const notifRef = db
-      .collection(COLLECTIONS.USERS)
-      .doc(conn.recipientId)
-      .collection(COLLECTIONS.NOTIFICATIONS)
-      .doc();
+    const notifRef = db.collection(COLLECTIONS.NOTIFICATIONS).doc();
 
     await notifRef.set({
       id: notifRef.id,
+      recipientId: conn.recipientId,
       title: 'New Connection Request',
       body: `${conn.senderName || 'Someone'} sent you a connection request.`,
       type: 'connection_request',
@@ -44,14 +41,11 @@ export const onConnectionUpdated = functions.firestore
     const after = change.after.data();
 
     if (before.status !== 'accepted' && after.status === 'accepted') {
-      const notifRef = db
-        .collection(COLLECTIONS.USERS)
-        .doc(after.senderId)
-        .collection(COLLECTIONS.NOTIFICATIONS)
-        .doc();
+      const notifRef = db.collection(COLLECTIONS.NOTIFICATIONS).doc();
 
       await notifRef.set({
         id: notifRef.id,
+        recipientId: after.senderId,
         title: 'Connection Accepted! 🎉',
         body: `${after.recipientName || 'Your friend'} accepted your connection request.`,
         type: 'connection_accepted',

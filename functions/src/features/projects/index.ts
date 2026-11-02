@@ -17,14 +17,11 @@ export const onProjectUpdated = functions.firestore
       before.progress !== 100 &&
       after.ownerId
     ) {
-      const notifRef = db
-        .collection(COLLECTIONS.USERS)
-        .doc(after.ownerId)
-        .collection(COLLECTIONS.NOTIFICATIONS)
-        .doc();
+      const notifRef = db.collection(COLLECTIONS.NOTIFICATIONS).doc();
 
       await notifRef.set({
         id: notifRef.id,
+        recipientId: after.ownerId,
         title: 'Project Completed! 🚀',
         body: `All milestones reached for "${after.title}".`,
         type: 'project_completed',

@@ -13,14 +13,11 @@ export const onInvitationUpdated = functions.firestore
     const after = change.after.data();
 
     if (before.status !== 'accepted' && after.status === 'accepted') {
-      const notifRef = db
-        .collection(COLLECTIONS.USERS)
-        .doc(after.senderId)
-        .collection(COLLECTIONS.NOTIFICATIONS)
-        .doc();
+      const notifRef = db.collection(COLLECTIONS.NOTIFICATIONS).doc();
 
       await notifRef.set({
         id: notifRef.id,
+        recipientId: after.senderId,
         title: 'Invite Code Redeemed! 🎉',
         body: `${after.claimedByName || 'A friend'} used your invite code (${after.code}) to connect.`,
         type: 'invitation_redeemed',

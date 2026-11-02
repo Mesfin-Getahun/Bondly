@@ -34,11 +34,7 @@ export const onMessageCreated = functions.firestore
     });
 
     if (recipientId) {
-      const notifRef = db
-        .collection(COLLECTIONS.USERS)
-        .doc(recipientId)
-        .collection(COLLECTIONS.NOTIFICATIONS)
-        .doc();
+      const notifRef = db.collection(COLLECTIONS.NOTIFICATIONS).doc();
 
       const previewText =
         msg.text && msg.text.length > 60
@@ -47,6 +43,7 @@ export const onMessageCreated = functions.firestore
 
       await notifRef.set({
         id: notifRef.id,
+        recipientId: recipientId,
         title: `Message from ${msg.senderName || 'A friend'}`,
         body: previewText,
         type: 'message',

@@ -30,14 +30,11 @@ export const checkFollowupReminders = functions.pubsub
       if (!parentUserDoc) continue;
       const userId = parentUserDoc.id;
 
-      const notifRef = db
-        .collection(COLLECTIONS.USERS)
-        .doc(userId)
-        .collection(COLLECTIONS.NOTIFICATIONS)
-        .doc();
+      const notifRef = db.collection(COLLECTIONS.NOTIFICATIONS).doc();
 
       batch.set(notifRef, {
         id: notifRef.id,
+        recipientId: userId,
         title: `Reminder: Check in with ${data.contactName || 'your friend'}`,
         body: data.title || 'You have a scheduled relationship follow-up.',
         type: 'followup',

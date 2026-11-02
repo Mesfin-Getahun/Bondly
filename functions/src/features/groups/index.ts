@@ -18,14 +18,11 @@ export const onGroupMemberAdded = functions.firestore
       updatedAt: new Date(),
     });
 
-    const notifRef = db
-      .collection(COLLECTIONS.USERS)
-      .doc(memberId)
-      .collection(COLLECTIONS.NOTIFICATIONS)
-      .doc();
+    const notifRef = db.collection(COLLECTIONS.NOTIFICATIONS).doc();
 
     await notifRef.set({
       id: notifRef.id,
+      recipientId: memberId,
       title: 'Added to Circle',
       body: 'You have been added to a shared circle.',
       type: 'group',
