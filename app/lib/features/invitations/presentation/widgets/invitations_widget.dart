@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../domain/entities/invitations_entity.dart';
@@ -38,6 +39,16 @@ class InvitationTile extends StatelessWidget {
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
+    );
+  }
+
+  void _sendEmail(BuildContext context) {
+    launchInviteEmail(
+      context: context,
+      code: invitation.code,
+      recipientEmail: invitation.inviteeEmail,
+      recipientName: invitation.inviteeName,
+      senderName: invitation.senderName,
     );
   }
 
@@ -216,6 +227,14 @@ class InvitationTile extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (invitation.isPending)
+                    IconButton(
+                      tooltip: invitation.inviteeEmail != null
+                          ? 'Send Email to ${invitation.inviteeEmail}'
+                          : 'Send Invite via Email',
+                      icon: const Icon(Icons.email_outlined, size: 20, color: AppColors.primary),
+                      onPressed: () => _sendEmail(context),
+                    ),
                   IconButton(
                     tooltip: 'Copy Link',
                     icon: const Icon(Icons.link_rounded, size: 20, color: AppColors.primary),
@@ -299,12 +318,11 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
     if (mounted) {
       Navigator.pop(context);
       if (inv != null) {
-        Clipboard.setData(ClipboardData(text: inv.code));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Created code ${inv.code}! Copied to clipboard.'),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.green.shade700,
+        showDialog(
+          context: context,
+          builder: (ctx) => InvitationCreatedDialog(
+            invitation: inv,
+            senderName: widget.senderName,
           ),
         );
       }
@@ -425,6 +443,9 @@ class _CreateInvitationSheetState extends State<CreateInvitationSheet> {
                   labelStyle: const TextStyle(color: AppColors.textSecondary),
                   hintText: 'sarah@example.com',
                   hintStyle: const TextStyle(color: AppColors.microLabel),
+                  helperText: 'Pre-fills an email invitation you can send in 1 tap.',
+                  helperMaxLines: 2,
+                  helperStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
                   prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textSecondary),
                   filled: true,
                   fillColor: AppColors.surfaceElevated,
@@ -744,6 +765,250 @@ class _RedeemInvitationSheetState extends State<RedeemInvitationSheet> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Helper function to launch the device's native email client with an invitation pre-filled
+Future<void> launchInviteEmail({
+  required BuildContext context,
+  required String code,
+  String? recipientEmail,
+  String? recipientName,
+  String? senderName,
+}) async {
+  final subject = Uri.encodeComponent('Join me on Bondly!');
+  final greeting = recipientName != null && recipientName.trim().isNotEmpty
+      ? 'Hi ${recipientName.trim()},\n\n'
+      : 'Hi!\n\n';
+  final senderSignOff = senderName != null && senderName.trim().isNotEmpty
+      ? '\n\nBest,\n${senderName.trim()}'
+      : '';
+  final body = Uri.encodeComponent(
+    '${greeting}I would love to connect with you on Bondly.\n\n'
+    'Use my private invite code to connect with me:\n'
+    '👉 Code: $code\n\n'
+    'Open Bondly here:\n'
+    'https://bondly-f401f.web.app\n\n'
+    'Once you log in, go to "Invitations" > "Redeem Code" and enter: $code$senderSignOff',
+  );
+
+  final email = recipientEmail?.trim() ?? '';
+  final mailtoUri = Uri.parse('mailto:$email?subject=$subject&body=$body');
+
+  try {
+    final launched = await launchUrl(mailtoUri, mode: LaunchMode.externalApplication);
+    if (!launched && context.mounted) {
+      Clipboard.setData(ClipboardData(
+        text: 'Join me on Bondly! Use invite code: $code at https://bondly-f401f.web.app (Redeem in Invitations)',
+      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not open email app. Invitation message copied to clipboard!'),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  } catch (e) {
+    if (context.mounted) {
+      Clipboard.setData(ClipboardData(
+        text: 'Join me on Bondly! Use invite code: $code at https://bondly-f401f.web.app (Redeem in Invitations)',
+      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invitation copied to clipboard!'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+}
+
+/// Dialog displayed after creating a new invitation code, allowing 1-tap email sending or copying
+class InvitationCreatedDialog extends StatelessWidget {
+  final InvitationEntity invitation;
+  final String senderName;
+
+  const InvitationCreatedDialog({
+    super.key,
+    required this.invitation,
+    required this.senderName,
+  });
+
+  String get _fullMessage =>
+      'Join me on Bondly! Use my invite code: ${invitation.code} at https://bondly-f401f.web.app (Enter under Invitations > Redeem Code).';
+
+  @override
+  Widget build(BuildContext context) {
+    final hasEmail = invitation.inviteeEmail != null && invitation.inviteeEmail!.trim().isNotEmpty;
+
+    return Dialog(
+      backgroundColor: AppColors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withAlpha(30),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 34),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Invitation Created!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Share this private code with your friend so they can connect with you on Bondly.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 18),
+
+            // Code Display Box
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceElevated,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.primary.withAlpha(100), width: 1.5),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.vpn_key_rounded, color: AppColors.primary, size: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    invitation.code,
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  IconButton(
+                    tooltip: 'Copy Code',
+                    icon: const Icon(Icons.copy_rounded, color: AppColors.textPrimary, size: 20),
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: invitation.code));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Invite code copied to clipboard!'),
+                          duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Email button (if email specified)
+            if (hasEmail) ...[
+              ElevatedButton.icon(
+                onPressed: () {
+                  launchInviteEmail(
+                    context: context,
+                    code: invitation.code,
+                    recipientEmail: invitation.inviteeEmail,
+                    recipientName: invitation.inviteeName,
+                    senderName: senderName,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                icon: const Icon(Icons.email_outlined, size: 20),
+                label: Text(
+                  'Send Email to ${invitation.inviteeEmail!}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+
+            // Copy full message button
+            OutlinedButton.icon(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: _fullMessage));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Full invitation message copied to clipboard!'),
+                    duration: Duration(seconds: 2),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.textPrimary,
+                side: const BorderSide(color: AppColors.border),
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              icon: const Icon(Icons.copy_all_rounded, size: 18),
+              label: const Text('Copy Invite Message & Link'),
+            ),
+            const SizedBox(height: 12),
+
+            // How to redeem note
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceElevated,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.info_outline_rounded, size: 16, color: AppColors.textSecondary),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Your friend opens Bondly > Invitations > "Redeem Code" to connect.',
+                      style: TextStyle(fontSize: 11.5, color: AppColors.textSecondary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.textSecondary,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: const Text('Done', style: TextStyle(fontWeight: FontWeight.w600)),
+            ),
+          ],
         ),
       ),
     );

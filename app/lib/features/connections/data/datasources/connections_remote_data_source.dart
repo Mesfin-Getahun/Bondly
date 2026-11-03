@@ -100,23 +100,76 @@ class FirestoreConnectionsRemoteDataSourceImpl implements ConnectionsRemoteDataS
     required String otherUserName,
   }) async {
     try {
-      if (currentUserId == otherUserId) {
+      final input = otherUserId.trim();
+      if (input.isEmpty) {
+        throw ServerException('Please enter an email address or user ID.');
+      }
+
+      String targetUserId = input;
+      String targetUserName = otherUserName.trim();
+
+      // If user entered an email address, resolve their real registered Firebase UID
+      if (input.contains('@')) {
+        final cleanEmail = input.toLowerCase();
+        final usersRef = _firestore.collection(FirestoreCollections.users);
+        final snap = await usersRef.where('email', isEqualTo: cleanEmail).limit(1).get();
+
+        if (snap.docs.isEmpty) {
+          throw ServerException(
+            'No registered Bondly user found with email "$input". Make sure your friend has registered on Bondly, or share an invite code with them via the Invitations tab!',
+          );
+        }
+
+        final targetDoc = snap.docs.first;
+        targetUserId = targetDoc.id;
+        final docName = (targetDoc.data()['displayName'] as String?)?.trim();
+        if (docName != null && docName.isNotEmpty) {
+          targetUserName = docName;
+        } else if (targetUserName.isEmpty) {
+          targetUserName = cleanEmail.split('@').first;
+        }
+      } else {
+        // Attempt to fetch profile name if available
+        try {
+          final userDoc = await _firestore.collection(FirestoreCollections.users).doc(targetUserId).get();
+          if (userDoc.exists) {
+            final docName = (userDoc.data()?['displayName'] as String?)?.trim();
+            if (docName != null && docName.isNotEmpty && targetUserName.isEmpty) {
+              targetUserName = docName;
+            }
+          }
+        } catch (_) {}
+      }
+
+      if (currentUserId == targetUserId) {
         throw ServerException('Cannot send connection request to yourself.');
+      }
+
+      if (targetUserName.isEmpty) {
+        targetUserName = 'Friend';
       }
 
       // Check if existing connection request or relationship exists
       final existingA = await _connectionsRef
           .where('userA', isEqualTo: currentUserId)
-          .where('userB', isEqualTo: otherUserId)
+          .where('userB', isEqualTo: targetUserId)
           .get();
 
       final existingB = await _connectionsRef
-          .where('userA', isEqualTo: otherUserId)
+          .where('userA', isEqualTo: targetUserId)
           .where('userB', isEqualTo: currentUserId)
           .get();
 
       if (existingA.docs.isNotEmpty || existingB.docs.isNotEmpty) {
-        throw ServerException('A connection or request already exists with this user.');
+        final existing = existingA.docs.isNotEmpty ? existingA.docs.first.data() : existingB.docs.first.data();
+        final status = existing['status'];
+        if (status == 'accepted') {
+          throw ServerException('You are already connected as friends with this user.');
+        } else if (status == 'pending') {
+          throw ServerException('A pending connection request already exists with this user.');
+        } else {
+          throw ServerException('A connection record already exists with this user.');
+        }
       }
 
       final docRef = _connectionsRef.doc();
@@ -124,15 +177,17 @@ class FirestoreConnectionsRemoteDataSourceImpl implements ConnectionsRemoteDataS
       final model = ConnectionModel(
         id: docRef.id,
         userA: currentUserId,
-        userB: otherUserId,
+        userB: targetUserId,
         userAName: currentUserName,
-        userBName: otherUserName,
+        userBName: targetUserName,
         status: ConnectionStatus.pending,
         createdAt: now,
         updatedAt: now,
       );
 
       await docRef.set(model.toMap());
+    } on ServerException {
+      rethrow;
     } catch (e) {
       throw ServerException('Failed to send connection request: $e');
     }

@@ -346,11 +346,20 @@ class _SendRequestSheetState extends State<SendRequestSheet> {
       if (success) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Friend request sent!')),
+          const SnackBar(
+            content: Text('Friend request sent! They will see it in their Requests tab.'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(widget.controller.errorMessage ?? 'Failed to send request.')),
+          SnackBar(
+            content: Text(widget.controller.errorMessage ?? 'Failed to send request.'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 4),
+          ),
         );
       }
     }
@@ -392,14 +401,59 @@ class _SendRequestSheetState extends State<SendRequestSheet> {
                 ),
               ],
             ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withAlpha(20),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.primary.withAlpha(50)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.mark_email_read_rounded, size: 20, color: AppColors.primary),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Enter your friend\'s registered email address. The request will appear in their Requests tab immediately.',
+                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.3),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
+            TextFormField(
+              controller: _userIdController,
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: "Friend's Email or User ID *",
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
+                hintText: 'e.g. friend@example.com',
+                hintStyle: const TextStyle(color: AppColors.textTertiary),
+                filled: true,
+                fillColor: AppColors.surfaceElevated,
+                prefixIcon: const Icon(Icons.alternate_email_rounded, color: AppColors.textSecondary),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.border, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                ),
+              ),
+              validator: (v) => v == null || v.trim().isEmpty ? 'Please enter an email or user ID' : null,
+            ),
+            const SizedBox(height: 12),
             TextFormField(
               controller: _nameController,
               style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
               decoration: InputDecoration(
-                labelText: "Friend's Name *",
+                labelText: "Friend's Name (Optional)",
                 labelStyle: const TextStyle(color: AppColors.textSecondary),
-                hintText: 'Sarah Jenkins',
+                hintText: 'Auto-detected from their Bondly account if blank',
                 hintStyle: const TextStyle(color: AppColors.textTertiary),
                 filled: true,
                 fillColor: AppColors.surfaceElevated,
@@ -413,30 +467,6 @@ class _SendRequestSheetState extends State<SendRequestSheet> {
                   borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                 ),
               ),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a name' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _userIdController,
-              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-              decoration: InputDecoration(
-                labelText: "Friend's User ID or Email *",
-                labelStyle: const TextStyle(color: AppColors.textSecondary),
-                hintText: 'Enter user UID or account identifier',
-                hintStyle: const TextStyle(color: AppColors.textTertiary),
-                filled: true,
-                fillColor: AppColors.surfaceElevated,
-                prefixIcon: const Icon(Icons.tag_rounded, color: AppColors.textSecondary),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.border, width: 1),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-                ),
-              ),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Please enter a User ID' : null,
             ),
             const SizedBox(height: 24),
             ElevatedButton(

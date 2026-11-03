@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/material.dart';
+import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/messaging/presentation/pages/messaging_page.dart';
@@ -19,6 +21,15 @@ class MainNavigationShell extends StatefulWidget {
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    final fbUser = fb.FirebaseAuth.instance.currentUser;
+    if (fbUser != null) {
+      FirebaseAuthRemoteDataSourceImpl.syncUserToFirestore(fbUser);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

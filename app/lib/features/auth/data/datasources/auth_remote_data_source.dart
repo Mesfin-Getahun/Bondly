@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import '../../../../core/constants/firestore_collections.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../models/auth_model.dart';
 
@@ -45,6 +47,9 @@ class FirebaseAuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final fbSub = _firebaseAuth.authStateChanges().listen((fbUser) {
       if (_localGuestUser == null) {
+        if (fbUser != null) {
+          syncUserToFirestore(fbUser);
+        }
         streamController.add(fbUser != null ? AuthModel.fromFirebaseUser(fbUser) : null);
       }
     });
@@ -75,7 +80,9 @@ class FirebaseAuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (credential.user == null) {
         throw AuthException('User credentials not returned.');
       }
-      return AuthModel.fromFirebaseUser(credential.user!);
+      final user = credential.user!;
+      await syncUserToFirestore(user);
+      return AuthModel.fromFirebaseUser(user);
     } on fb.FirebaseAuthException catch (e) {
       throw AuthException(_formatFirebaseError(e));
     } catch (e) {
@@ -103,11 +110,36 @@ class FirebaseAuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         await credential.user!.reload();
       }
       final updatedUser = _firebaseAuth.currentUser ?? credential.user!;
+      await syncUserToFirestore(updatedUser, customDisplayName: displayName);
       return AuthModel.fromFirebaseUser(updatedUser);
     } on fb.FirebaseAuthException catch (e) {
       throw AuthException(_formatFirebaseError(e));
     } catch (e) {
       throw AuthException(e.toString());
+    }
+  }
+
+  /// Syncs an authenticated user profile to the Firestore 'users' collection so they can be discovered by friends.
+  static Future<void> syncUserToFirestore(fb.User user, {String? customDisplayName}) async {
+    try {
+      final name = (customDisplayName != null && customDisplayName.trim().isNotEmpty)
+          ? customDisplayName.trim()
+          : ((user.displayName != null && user.displayName!.trim().isNotEmpty)
+              ? user.displayName!.trim()
+              : (user.email != null && user.email!.contains('@') ? user.email!.split('@').first : 'Bondly Friend'));
+      final email = (user.email ?? '').toLowerCase().trim();
+      if (user.uid.isNotEmpty) {
+        await FirebaseFirestore.instance.collection(FirestoreCollections.users).doc(user.uid).set({
+          'id': user.uid,
+          'email': email,
+          'displayName': name,
+          'photoUrl': user.photoURL,
+          'updatedAt': FieldValue.serverTimestamp(),
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
+    } catch (_) {
+      // Non-blocking sync, best effort
     }
   }
 
