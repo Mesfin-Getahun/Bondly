@@ -25,7 +25,7 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<AuthEntity> signInWithEmail(String email, String password) async {
+  Future<AuthEntity> signInWithEmailAndPassword(String email, String password) async {
     return const AuthEntity(
       id: 'mock_user',
       displayName: 'Mock User',
@@ -35,8 +35,8 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<AuthEntity> signUpWithEmail(String email, String password, {String? displayName}) async {
-    return const AuthEntity(
+  Future<AuthEntity> signUpWithEmailAndPassword(String email, String password, {String? displayName}) async {
+    return AuthEntity(
       id: 'mock_new_user',
       displayName: displayName ?? 'New User',
       email: email,
@@ -48,11 +48,11 @@ class MockAuthRepository implements AuthRepository {
   Future<void> signOut() async {}
 
   @override
-  Future<void> sendPasswordReset(String email) async {}
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 void main() {
-  testWidgets('AuthPage renders title, forms, and Guest Preview button',
+  testWidgets('AuthPage renders title, forms, and Sign In action',
       (WidgetTester tester) async {
     final mockRepo = MockAuthRepository();
     final controller = AuthController(useCases: AuthUseCases(mockRepo));
@@ -71,8 +71,8 @@ void main() {
       findsOneWidget,
     );
 
-    // Verify Guest Button
-    expect(find.text('Continue as Guest (Instant Preview)'), findsOneWidget);
+    // Verify Sign In submit button exists
+    expect(find.widgetWithText(ElevatedButton, 'Sign In'), findsOneWidget);
 
     // Verify Email & Password input fields exist
     expect(find.byType(TextFormField), findsNWidgets(2));

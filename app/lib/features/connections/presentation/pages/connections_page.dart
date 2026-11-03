@@ -293,12 +293,20 @@ class _ConnectionsPageState extends State<ConnectionsPage> with SingleTickerProv
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        onPressed: _showAddFriendSheet,
-        tooltip: 'Add Friend',
-        child: const Icon(Icons.person_add_rounded),
+      floatingActionButton: ListenableBuilder(
+        listenable: _controller,
+        builder: (context, _) {
+          if (_controller.acceptedFriends.isEmpty && _controller.incomingRequests.isEmpty) {
+            return const SizedBox.shrink();
+          }
+          return FloatingActionButton(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            onPressed: _showAddFriendSheet,
+            tooltip: 'Add Friend',
+            child: const Icon(Icons.person_add_rounded),
+          );
+        },
       ),
     );
   }

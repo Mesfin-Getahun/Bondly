@@ -381,49 +381,6 @@ class _AuthPageState extends State<AuthPage> {
                                   ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-
-                        // Divider
-                        Row(
-                          children: [
-                            Expanded(child: Divider(color: AppColors.border)),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: Text(
-                                'or',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: AppColors.microLabel,
-                                ),
-                              ),
-                            ),
-                            Expanded(child: Divider(color: AppColors.border)),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Guest / Quick Access Button
-                        SizedBox(
-                          height: 48,
-                          child: OutlinedButton.icon(
-                            onPressed: widget.controller.isLoading
-                                ? null
-                                : () => widget.controller.signInAnonymously(),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.textPrimary,
-                              backgroundColor: AppColors.surface,
-                              side: const BorderSide(color: AppColors.border, width: 1),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            icon: const Icon(Icons.flash_on_rounded, color: AppColors.primary),
-                            label: const Text(
-                              'Continue as Guest (Instant Preview)',
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   );

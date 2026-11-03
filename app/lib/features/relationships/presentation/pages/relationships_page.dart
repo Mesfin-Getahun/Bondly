@@ -242,7 +242,7 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
                     : list.isEmpty
                         ? _EmptyRelationshipsView(onAddContact: () => _showAddSheet())
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
                             itemCount: list.length,
                             itemBuilder: (context, index) {
                               final rel = list[index];
@@ -258,13 +258,21 @@ class _RelationshipsPageState extends State<RelationshipsPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 4,
-        onPressed: () => _showAddSheet(),
-        icon: const Icon(Icons.person_add_rounded),
-        label: const Text('Add Contact', style: TextStyle(fontWeight: FontWeight.bold)),
+      floatingActionButton: ListenableBuilder(
+        listenable: _controller,
+        builder: (context, _) {
+          if (_controller.filteredRelationships.isEmpty) {
+            return const SizedBox.shrink();
+          }
+          return FloatingActionButton.extended(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 4,
+            onPressed: () => _showAddSheet(),
+            icon: const Icon(Icons.person_add_rounded),
+            label: const Text('Add Contact', style: TextStyle(fontWeight: FontWeight.bold)),
+          );
+        },
       ),
     );
   }

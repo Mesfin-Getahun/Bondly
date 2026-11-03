@@ -40,12 +40,12 @@ void main() {
     });
 
     test('ownerId isolation: relationship is strictly bound to userId', () {
-      const rel = RelationshipEntity(
+      final rel = RelationshipEntity(
         id: 'rel_3',
         userId: 'strictly_owner_uid_999',
         name: 'Private Contact',
-        createdAt: null as dynamic,
-        updatedAt: null as dynamic,
+        createdAt: DateTime(2026, 1, 1),
+        updatedAt: DateTime(2026, 1, 1),
       );
 
       expect(rel.userId, 'strictly_owner_uid_999');

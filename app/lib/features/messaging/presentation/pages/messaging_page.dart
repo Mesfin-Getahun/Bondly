@@ -251,12 +251,20 @@ class _MessagingPageState extends State<MessagingPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 4,
-        onPressed: _showNewChatDialog,
-        child: const Icon(Icons.edit_rounded),
+      floatingActionButton: ListenableBuilder(
+        listenable: _controller,
+        builder: (context, _) {
+          if (_controller.conversations.isEmpty) {
+            return const SizedBox.shrink();
+          }
+          return FloatingActionButton(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 4,
+            onPressed: _showNewChatDialog,
+            child: const Icon(Icons.edit_rounded),
+          );
+        },
       ),
     );
   }
